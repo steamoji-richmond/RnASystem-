@@ -1,0 +1,4876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+<meta name="theme-color" content="#0072CE" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<title>Steamoji — Public Speaking Workshops</title>
+<style>
+  :root{
+    --primary-blue:#0072CE;
+    --primary-yellow:#FFC82E;
+    --accent-orange:#F36F21;
+    --text-dark:#414042;
+    --bg-light:#F5F5F5;
+    --white:#FFFFFF;
+    --bg:var(--primary-blue);
+    --panel:var(--white);
+    --muted:#E8E8E8;
+    --text:var(--white);
+    --accent:var(--primary-blue);
+    --accent2:var(--primary-yellow);
+    --warn:var(--accent-orange);
+    --danger:#E63946;
+    --border:#D1D1D1;
+    --border-light:rgba(255,255,255,.3);
+    --shadow:0 4px 12px rgba(0,0,0,.2);
+    --shadow-hover:0 8px 24px rgba(0,0,0,.3);
+    --transition:all 0.2s ease;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:'';
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background:
+      radial-gradient(circle at 10% 20%, rgba(243,111,33,.15) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(230,57,70,.1) 0%, transparent 50%),
+      linear-gradient(135deg, transparent 0%, rgba(255,200,46,.05) 50%, transparent 100%);
+    pointer-events:none;
+    z-index:0;
+  }
+  body::after{
+    content:'';
+    position:fixed;
+    bottom:-100px;
+    left:-50px;
+    width:300px;
+    height:300px;
+    border-radius:50%;
+    background:rgba(230,57,70,.1);
+    pointer-events:none;
+    z-index:0;
+  }
+  main,header{
+    position:relative;
+    z-index:1;
+  }
+  header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:var(--primary-blue);
+    border-bottom:3px solid var(--primary-yellow);
+    box-shadow:0 4px 12px rgba(0,0,0,.25);
+    padding:14px 16px;
+  }
+  .header-content{
+    max-width:1200px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    font-size:20px;
+    white-space:nowrap;
+    color:var(--white);
+    letter-spacing:-0.5px;
+  }
+  .brand .dot{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--primary-yellow);
+    box-shadow:0 0 12px rgba(255,200,46,.7);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{transform:scale(1);opacity:1}
+    50%{transform:scale(1.1);opacity:.8}
+  }
+  .nav-buttons{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+    flex:1;
+  }
+  button{
+    background:var(--primary-yellow);
+    border:2px solid var(--primary-yellow);
+    color:var(--primary-blue);
+    padding:12px 24px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:15px;
+    transition:var(--transition);
+    min-height:44px;
+    touch-action:manipulation;
+    white-space:nowrap;
+    letter-spacing:0.3px;
+    box-shadow:0 2px 4px rgba(0,0,0,.1);
+  }
+  button:hover{
+    background:#FFD966;
+    border-color:#FFD966;
+    color:var(--primary-blue);
+    transform:translateY(-1px);
+    box-shadow:0 3px 8px rgba(0,0,0,.15);
+  }
+  button:active{
+    transform:translateY(0);
+    box-shadow:0 1px 2px rgba(0,0,0,.1);
+  }
+  button.primary{
+    background:var(--primary-yellow);
+    border-color:var(--primary-yellow);
+    color:var(--primary-blue);
+    box-shadow:0 2px 4px rgba(0,0,0,.1);
+    font-weight:700;
+  }
+  button.primary:hover{
+    background:#FFD966;
+    border-color:#FFD966;
+    box-shadow:0 3px 8px rgba(0,0,0,.15);
+    transform:translateY(-1px);
+  }
+  button.ghost{
+    background:transparent;
+    border-color:var(--border-light);
+    color:var(--white);
+  }
+  button.ghost:hover{
+    background:rgba(255,255,255,.1);
+    border-color:var(--white);
+  }
+  button.red{
+    background:var(--danger);
+    border-color:var(--danger);
+    color:var(--white);
+  }
+  button.red:hover{
+    background:#d32f2f;
+    border-color:#d32f2f;
+  }
+  main{
+    padding:24px 16px;
+    max-width:1200px;
+    margin:0 auto;
+    position:relative;
+  }
+  .grid{display:grid;gap:20px}
+  .cols-2{grid-template-columns:2fr 1fr}
+  .panel{
+    background:var(--panel);
+    border:2px solid var(--border);
+    border-radius:20px;
+    padding:24px;
+    box-shadow:0 6px 20px rgba(0,0,0,.15);
+    transition:var(--transition);
+    position:relative;
+    overflow:hidden;
+    color:var(--text-dark);
+  }
+  .panel::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:4px;
+    background:linear-gradient(90deg, var(--primary-yellow) 0%, var(--accent-orange) 100%);
+    opacity:0;
+    transition:var(--transition);
+  }
+  .panel:hover{
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+    border-color:var(--primary-yellow);
+    transform:translateY(-2px);
+  }
+  .panel:hover::before{
+    opacity:1;
+  }
+  .compact{padding:16px;font-size:14px}
+  h2{
+    margin:0 0 16px 0;
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:-0.5px;
+    color:var(--text-dark);
+  }
+  .panel h2{
+    color:var(--text-dark);
+    font-weight:800;
+  }
+  h3{
+    margin:20px 0 12px;
+    font-size:18px;
+    font-weight:600;
+    opacity:.95;
+    color:var(--text-dark);
+  }
+  .panel h3{
+    color:var(--text-dark);
+  }
+  label{
+    display:block;
+    font-size:14px;
+    color:var(--text-dark);
+    margin-top:12px;
+    margin-bottom:6px;
+    font-weight:500;
+  }
+  .panel label{
+    color:var(--text-dark);
+  }
+  input,select,textarea{
+    width:100%;
+    background:var(--white);
+    border:2px solid var(--border);
+    padding:12px 16px;
+    color:var(--text-dark);
+    border-radius:12px;
+    font-size:15px;
+    transition:var(--transition);
+    min-height:44px;
+  }
+  input:focus,select:focus,textarea:focus{
+    outline:none;
+    border-color:var(--primary-yellow);
+    box-shadow:0 0 0 4px rgba(255,200,46,.25);
+    transform:translateY(-1px);
+  }
+  input[type="file"]{
+    padding:10px;
+    cursor:pointer;
+  }
+  input[type="file"]::-webkit-file-upload-button{
+    background:var(--primary-yellow);
+    border:1px solid var(--primary-yellow);
+    color:var(--primary-blue);
+    padding:8px 16px;
+    border-radius:8px;
+    margin-right:12px;
+    cursor:pointer;
+    font-weight:600;
+    transition:var(--transition);
+  }
+  input[type="file"]::-webkit-file-upload-button:hover{
+    background:#FFD966;
+    border-color:#FFD966;
+  }
+  .row{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .row.wrap{flex-wrap:wrap}
+  .pill{
+    display:inline-flex;
+    gap:6px;
+    align-items:center;
+    padding:6px 12px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:var(--muted);
+    color:var(--text-dark);
+    font-size:12px;
+    font-weight:500;
+  }
+  .panel .pill{
+    background:var(--muted);
+    color:var(--text-dark);
+  }
+  .list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .item{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:18px;
+    border:2px solid var(--border);
+    border-radius:16px;
+    background:var(--white);
+    transition:var(--transition);
+  }
+  .item:hover{
+    background:var(--muted);
+    border-color:var(--primary-yellow);
+    transform:translateX(4px);
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+  }
+  .muted{
+    opacity:.7;
+    color:var(--text-dark);
+  }
+  .panel .muted{
+    color:var(--text-dark);
+    opacity:.7;
+  }
+  .caption{
+    font-size:13px;
+    opacity:.8;
+    line-height:1.4;
+    color:var(--text-dark);
+  }
+  .panel .caption{
+    color:var(--text-dark);
+    opacity:.7;
+  }
+  .success{color:var(--accent)}
+  .danger{color:var(--danger)}
+  .warn{color:var(--warn)}
+  table{
+    border-collapse:collapse;
+    width:100%;
+  }
+  table th, table td{
+    border-bottom:1px solid var(--border);
+  }
+  table tbody tr:hover{
+    background:var(--bg-light);
+  }
+  .scroll{
+    max-height:300px;
+    overflow-y:auto;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px;
+    background:var(--muted);
+  }
+  .scroll::-webkit-scrollbar{
+    width:8px;
+  }
+  .scroll::-webkit-scrollbar-track{
+    background:var(--muted);
+    border-radius:4px;
+  }
+  .scroll::-webkit-scrollbar-thumb{
+    background:var(--primary-yellow);
+    border-radius:4px;
+  }
+  .scroll::-webkit-scrollbar-thumb:hover{
+    background:#FFD966;
+  }
+  .hidden{display:none!important}
+  #video{
+    width:100%;
+    height:480px;
+    max-height:70vh;
+    background:var(--muted);
+    border:2px dashed var(--border);
+    border-radius:16px;
+    object-fit:cover;
+  }
+  .toast{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:24px;
+    background:var(--primary-yellow);
+    border:3px solid var(--primary-blue);
+    padding:16px 24px;
+    border-radius:16px;
+    box-shadow:0 12px 48px rgba(0,0,0,.35);
+    z-index:1000;
+    font-weight:700;
+    color:var(--primary-blue);
+    font-size:15px;
+    animation:slideUp 0.3s ease;
+  }
+  @keyframes slideUp{
+    from{transform:translateX(-50%) translateY(20px);opacity:0}
+    to{transform:translateX(-50%) translateY(0);opacity:1}
+  }
+  .modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,114,206,.85);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:2000;
+    padding:20px;
+    backdrop-filter:blur(4px);
+  }
+  .modal.hidden{display:none}
+  .card{
+    background:var(--white);
+    border:3px solid var(--primary-yellow);
+    border-radius:24px;
+    padding:28px;
+    min-width:320px;
+    max-width:90vw;
+    width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+    position:relative;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:6px;
+    background:linear-gradient(90deg, var(--primary-yellow) 0%, var(--accent-orange) 100%);
+    border-radius:24px 24px 0 0;
+  }
+  .big{
+    font-size:56px;
+    font-weight:900;
+    line-height:1;
+    color:var(--primary-blue);
+  }
+  .success .big{
+    color:var(--primary-blue);
+  }
+  /* Calendar picker icons */
+  input[type="month"],input[type="date"],input[type="time"]{
+    color-scheme:light;
+    padding-right:40px;
+  }
+  input[type="month"]::-webkit-calendar-picker-indicator,
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator{
+    opacity:.7;
+    cursor:pointer;
+    filter:brightness(0) saturate(100%) invert(27%) sepia(96%) saturate(7481%) hue-rotate(199deg) brightness(99%) contrast(101%);
+  }
+  input[type="month"]::-webkit-calendar-picker-indicator:hover,
+  input[type="date"]::-webkit-calendar-picker-indicator:hover,
+  input[type="time"]::-webkit-calendar-picker-indicator:hover{
+    opacity:1;
+  }
+  /* Mobile optimizations */
+  @media (max-width:768px){
+    body{font-size:15px}
+    header{padding:10px 12px}
+    .header-content{
+      flex-direction:column;
+      align-items:stretch;
+    }
+    .brand{font-size:16px;justify-content:center}
+    .nav-buttons{
+      flex-direction:column;
+      width:100%;
+    }
+    .nav-buttons button{
+      width:100%;
+      justify-content:center;
+    }
+    main{padding:16px 12px}
+    .grid{gap:16px}
+    .cols-2{grid-template-columns:1fr}
+    .panel{padding:16px;border-radius:12px}
+    h2{font-size:20px;margin-bottom:12px}
+    h3{font-size:16px;margin:16px 0 10px}
+    button{
+      padding:14px 18px;
+      font-size:15px;
+    }
+    .row{gap:10px}
+    .row.wrap button{flex:1;min-width:120px}
+    input,select,textarea{
+      padding:14px 16px;
+      font-size:16px;
+    }
+    #video{
+      height:300px;
+      max-height:50vh;
+      border-radius:12px;
+    }
+    .card{
+      padding:20px;
+      border-radius:16px;
+      margin:10px;
+    }
+    .big{font-size:48px}
+    .scroll{max-height:250px}
+    .item{
+      flex-direction:column;
+      align-items:stretch;
+      padding:14px;
+    }
+    .item > div:last-child{
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+      margin-top:8px;
+    }
+    .item button{
+      flex:1;
+      min-width:100px;
+    }
+    label{
+      margin-top:10px;
+    }
+    .grid[style*="grid-template-columns"]{
+      grid-template-columns:1fr!important;
+    }
+  }
+  @media (max-width:480px){
+    .brand{font-size:14px}
+    .brand .dot{width:10px;height:10px}
+    h2{font-size:18px}
+    .panel{padding:14px}
+    button{padding:12px 16px;font-size:14px}
+    .card{padding:18px}
+    .big{font-size:42px}
+  }
+  /* Tablet optimizations */
+  @media (min-width:769px) and (max-width:1024px){
+    main{padding:18px 16px}
+    .cols-2{grid-template-columns:1fr}
+  }
+  /* Touch device optimizations */
+  @media (hover:none) and (pointer:coarse){
+    button:hover{
+      transform:none;
+      background:inherit;
+    }
+    .item:hover{
+      background:inherit;
+      border-color:inherit;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-content">
+    <div class="brand">
+      <div class="dot"></div>
+    <div>Steamoji Workshops</div>
+  </div>
+    <div class="nav-buttons">
+      <!-- Navigation buttons removed - using URL routing instead -->
+  </div>
+  </div>
+</header>
+
+<main>
+  <section id="register">
+    <div class="panel">
+      <h2>Register for Workshop</h2>
+      <div id="regForm">
+        <div class="row wrap" style="margin-bottom:12px">
+          <label style="flex:1;min-width:200px;margin:0">Parent Email <span style="color:var(--danger)">*</span>
+            <input id="regEmail" type="email" placeholder="Enter your email address" autocomplete="email" required/>
+          </label>
+          <button id="searchEmailBtn" class="primary" style="flex:0 0 auto;margin-top:24px;min-width:120px">Search</button>
+      </div>
+        <div id="emailStatus" class="caption muted" style="margin-top:8px"></div>
+        <div id="memberSelection" class="hidden" style="margin-top:16px">
+          <h3>Select Member to Register</h3>
+          <div id="memberList" class="list"></div>
+          </div>
+        <div id="regDetails" class="hidden" style="margin-top:16px">
+          <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:12px">
+            <label>First Name<input id="regFirst" readonly/></label>
+            <label>Last Name<input id="regLast" readonly/></label>
+            </div>
+          <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px">
+            <label>Badge ID<input id="regBadge" readonly/></label>
+            <label>Age<input id="regAge" readonly/></label>
+            </div>
+          <h3 style="margin-top:16px">Eligible Sessions</h3>
+        <div id="eligible" class="list"></div>
+        <div id="eligiblePagination" class="row" style="margin-top:12px;justify-content:center;align-items:center;gap:8px;display:none;">
+          <button id="prevPage" class="primary" style="padding:8px 16px;font-size:14px;">Previous</button>
+          <span id="pageInfo" class="caption" style="min-width:120px;text-align:center;"></span>
+          <button id="nextPage" class="primary" style="padding:8px 16px;font-size:14px;">Next</button>
+        </div>
+          <div class="row" style="margin-top:16px;justify-content:flex-end">
+            <button id="clearReg" class="primary">Clear</button>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section id="attendance" class="grid cols-2 hidden">
+    <div class="panel">
+      <h2>Select a session</h2>
+      <div class="row wrap">
+        <select id="attSelect"></select>
+        <button id="attGo" class="primary">Go to Scanner</button>
+      </div>
+      <h3>Today & upcoming</h3>
+      <div id="attList" class="list"></div>
+    </div>
+    <div class="panel">
+      <h2>Recent arrivals</h2>
+      <div id="arrivals" class="scroll"><div class="caption">No one yet.</div></div>
+      <div class="caption" style="margin-top:8px">Duplicates and unregistered badges will warn here.</div>
+    </div>
+  </section>
+
+  <section id="scanPage" class="hidden">
+    <div class="panel">
+      <div class="row wrap" style="justify-content:space-between;gap:12px;margin-bottom:16px">
+        <h2 style="margin:0;flex:1;min-width:200px">Attendance — <span id="scanTitle"></span></h2>
+        <div class="row wrap" style="gap:8px;flex:0 0 auto">
+          <button id="printList" style="flex:1;min-width:140px">Print List</button>
+          <button id="scanBack" style="flex:1;min-width:140px">Back</button>
+        </div>
+      </div>
+      <div class="row wrap" style="margin:12px 0;gap:10px">
+        <button id="startScanAtt" class="primary" style="flex:1;min-width:140px">Start Camera</button>
+        <button id="stopScanAtt" class="primary" style="flex:1;min-width:100px">Stop</button>
+        <button id="attManual" style="flex:1;min-width:140px">Manual badge</button>
+        <span id="attStatus" class="caption muted" style="flex:1 1 100%;margin-top:4px">Status: idle</span>
+      </div>
+      <video id="video" playsinline muted></video>
+    </div>
+  </section>
+
+  <section id="admin" class="hidden">
+    <div class="grid cols-2">
+      <div class="panel">
+        <h2>Bulk create Sundays</h2>
+        <div class="row wrap">
+          <label style="min-width:160px">Month <input id="bulkMonth" type="month"/></label>
+          <label style="min-width:160px">Time A <input id="timeA" type="time" value="10:00"/></label>
+          <label style="min-width:160px">Time B <input id="timeB" type="time" value="13:00"/></label>
+        </div>
+        <div class="row wrap">
+          <label style="min-width:160px">Capacity <input id="bulkCap" type="number" value="10" min="1"/></label>
+          <label style="min-width:280px">Topic prefix <input id="bulkTopic" placeholder="Public Speaking "/></label>
+        </div>
+        <div class="row" style="margin-top:8px"><button id="bulkBtn" class="primary">Generate Sundays</button></div>
+        <div id="bulkOut" class="caption" style="margin-top:6px"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Add / edit one session</h2>
+        <div class="row wrap">
+          <label>Date <input id="oneDate" type="date"/></label>
+          <label>Time <input id="oneTime" type="time"/></label>
+          <label>Capacity <input id="oneCap" type="number" min="1" value="10"/></label>
+        </div>
+        <label>Topic <input id="oneTopic" placeholder="Public Speaking"/></label>
+        <div class="row" style="margin-top:8px">
+          <button id="oneAdd" class="primary">Add session</button>
+          <button id="admRefresh">Refresh list</button>
+        </div>
+      </div>
+
+      <div class="panel" style="grid-column:1 / -1">
+        <h2>Session Management</h2>
+        <div style="overflow-x:auto;margin-top:16px">
+          <table id="sessionTable" style="width:100%;border-collapse:collapse;min-width:800px">
+            <thead>
+              <tr style="background:var(--bg-light);border-bottom:2px solid var(--border)">
+                <th style="padding:12px;text-align:left;font-weight:700;color:var(--text-dark)">Date</th>
+                <th style="padding:12px;text-align:left;font-weight:700;color:var(--text-dark)">Time</th>
+                <th style="padding:12px;text-align:left;font-weight:700;color:var(--text-dark)">Topic</th>
+                <th style="padding:12px;text-align:center;font-weight:700;color:var(--text-dark)">Capacity</th>
+                <th style="padding:12px;text-align:center;font-weight:700;color:var(--text-dark)">Registered</th>
+                <th style="padding:12px;text-align:center;font-weight:700;color:var(--text-dark)">Attended</th>
+                <th style="padding:12px;text-align:center;font-weight:700;color:var(--text-dark)">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sessionTableBody">
+            </tbody>
+          </table>
+        </div>
+        <div id="adminPagination" class="row" style="margin-top:12px;justify-content:center;align-items:center;gap:8px;display:none;">
+          <button id="adminPrevPage" class="primary" style="padding:8px 16px;font-size:14px;">Previous</button>
+          <span id="adminPageInfo" class="caption" style="min-width:120px;text-align:center;"></span>
+          <button id="adminNextPage" class="primary" style="padding:8px 16px;font-size:14px;">Next</button>
+        </div>
+        <div id="admList" class="list" style="display:none"></div>
+      </div>
+
+      <div class="panel" style="grid-column:1 / -1">
+        <h2>Member lookup</h2>
+        <div class="row wrap">
+          <input id="lkName" placeholder="Search by name" style="min-width:200px"/>
+          <button id="lkFind" class="primary">Find</button>
+        </div>
+        <div id="lkOut" class="list" style="margin-top:10px"></div>
+        <div class="row" style="margin-top:8px">
+          <button id="printConfirm" class="primary" disabled style="display:none">Print parent confirmation</button>
+        </div>
+      </div>
+
+      <div class="panel" style="grid-column:1 / -1">
+        <h2>Reports & Export</h2>
+        <div class="row wrap" style="margin-top:10px">
+          <button id="expReg" class="primary">Export registrations CSV</button>
+          <button id="expAtt" class="primary">Export attendance CSV</button>
+          <button id="backupBtn" class="primary">Backup JSON</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="pwdModal" class="modal hidden">
+  <div class="card">
+    <div id="pwdPrompt" style="margin-bottom:8px">Enter password</div>
+    <input id="pwdInput" type="password" autocomplete="one-time-code" placeholder="Code"/>
+    <div class="row" style="margin-top:12px;justify-content:flex-end">
+      <button id="pwdCancel">Cancel</button>
+      <button id="pwdOk" class="primary">OK</button>
+    </div>
+  </div>
+</div>
+
+<div id="seatModal" class="modal hidden">
+  <div class="card" style="text-align:center">
+    <div class="caption">Assigned workstation</div>
+    <div id="seatNumber" class="big"></div>
+    <div class="caption" style="margin-top:2px">Please sit at this number.</div>
+    <div class="row" style="margin-top:12px;justify-content:center"><button id="seatOk" class="primary">OK</button></div>
+  </div>
+</div>
+
+<div id="successModal" class="modal hidden">
+  <div class="card" style="text-align:center;border-color:var(--primary-yellow)">
+    <div class="big" style="color:var(--primary-blue)">✓</div>
+    <div id="successText" style="margin-top:8px;font-size:22px;font-weight:900;color:var(--primary-blue)">Registered!</div>
+    <div class="row" style="margin-top:12px;justify-content:center"><button id="successOk" class="primary">OK</button></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden">Saved.</div>
+
+<!-- Load configuration from external file -->
+<script src="config.js"></script>
+<script>
+(function(){
+// Load configuration from config.js or use defaults
+var config = window.WORKSHOP_CONFIG;
+
+var ADMIN_PASS = config.ADMIN_PASS;
+var ATTEND_PASS = config.ATTEND_PASS;
+var STAFF = config.STAFF;
+var WORKSTATIONS = config.WORKSTATIONS;
+if(!Array.prototype.includes){Array.prototype.includes=function(x){return this.indexOf(x)!==-1;};}
+if(!Object.entries){Object.entries=function(obj){var out=[];for(var k in obj){if(Object.prototype.hasOwnProperty.call(obj,k)) out.push([k,obj[k]]);}return out;};}
+function $(id){return document.getElementById(id)}
+function showToast(msg){var text=String(msg||'Saved.');if(/^Registered/i.test(text)){showSuccess(text);return;}var t=$('toast');t.textContent=text;t.classList.remove('hidden');setTimeout(function(){t.classList.add('hidden');},1500);} function passwordDialog(text){return new Promise(function(resolve){var m=$('pwdModal');var p=$('pwdPrompt');var i=$('pwdInput');var ok=$('pwdOk');var c=$('pwdCancel');p.textContent=text||'Enter password';i.value='';m.classList.remove('hidden');i.focus();function done(v){cleanup();m.classList.add('hidden');resolve(v)}function onOk(){done(i.value)}function onCancel(){done(null)}function onKey(e){if(e.key==='Enter'){e.preventDefault();onOk()}if(e.key==='Escape'){e.preventDefault();onCancel()}}function cleanup(){ok.removeEventListener('click',onOk);c.removeEventListener('click',onCancel);i.removeEventListener('keydown',onKey)}ok.addEventListener('click',onOk);c.addEventListener('click',onCancel);i.addEventListener('keydown',onKey)})}
+function isScanPageActive(){ var el=document.getElementById('scanPage'); return el && !el.classList.contains('hidden'); }
+function showSeat(n){ 
+  if(!isScanPageActive()) return; 
+  var seatNumberEl = document.getElementById('seatNumber');
+  var seatModalEl = document.getElementById('seatModal');
+  if(!seatNumberEl || !seatModalEl) {
+    console.warn('Seat modal elements not found');
+    return;
+  }
+  seatNumberEl.textContent = n; 
+  seatModalEl.classList.remove('hidden'); 
+}
+$('seatOk').onclick=function(){$('seatModal').classList.add('hidden')}
+function showSuccess(msg){ $('successText').textContent = msg || 'Success'; $('successModal').classList.remove('hidden'); }
+$('successOk').onclick=function(){ $('successModal').classList.add('hidden'); }
+function todayFloor(){var now=new Date();return new Date(now.getFullYear(),now.getMonth(),now.getDate())}
+function listUpcoming(){
+  var start=todayFloor();
+  var filtered = sessionsCache.filter(function(s){return new Date(s.dt)>=start});
+  // Sort by date and time (ascending)
+  return filtered.sort(function(a,b){return new Date(a.dt) - new Date(b.dt)});
+}
+function title(s){return new Date(s.dt).toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'})+' • '+new Date(s.dt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})+' — '+s.topic}
+function ymd(date){var dt=new Date(date);return dt.toISOString().slice(0,10)}
+function capLeft(s){return (s.capacity||10)-((s.reg&&s.reg.length)||0)}
+// Cache for session capacity calculations
+var capacityCache = {};
+
+function capLeftFromSheets(s,sheetRegs){
+  // If no registrations data, all seats are available
+  if(!sheetRegs || !Array.isArray(sheetRegs) || sheetRegs.length === 0){
+    return 10;
+  }
+  
+  var sessionId = s.id;
+  var cacheKey = sessionId || (s.dt ? new Date(s.dt).toISOString() : '');
+  
+  // Check cache first
+  if(capacityCache[cacheKey] !== undefined){
+    return capacityCache[cacheKey];
+  }
+  
+  var sessionDate = new Date(s.dt).toISOString().slice(0,10);
+  var sessionTime = new Date(s.dt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  
+  var count = 0;
+  // Optimized: use for loop instead of filter for better performance
+  for(var i = 0; i < sheetRegs.length; i++){
+    var r = sheetRegs[i];
+    if(!r) continue;
+    // Match by sessionId first (most reliable)
+    if(sessionId && r.sessionId && r.sessionId === sessionId){
+      count++;
+      continue;
+    }
+    // Fallback: match by date and time
+    var regDate = r.sessionDate || (r.registeredDateAndTime ? new Date(r.registeredDateAndTime).toISOString().slice(0,10) : '');
+    var regTime = r.sessionTime || (r.registeredDateAndTime ? new Date(r.registeredDateAndTime).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '');
+    if(regDate === sessionDate && regTime === sessionTime){
+      count++;
+    }
+  }
+  
+  var seatsLeft = Math.max(0, 10 - count);
+  // Cache the result
+  capacityCache[cacheKey] = seatsLeft;
+  return seatsLeft;
+}
+function sameMonth(a,b){var A=new Date(a),B=new Date(b);return A.getFullYear()===B.getFullYear() && A.getMonth()===B.getMonth()}
+function memberName(b){var m=DB.getM(b);if(!m) return '';return [m.first||'',m.last||''].join(' ').trim()}
+var DB={
+  r:function(){try{return JSON.parse(localStorage.getItem('steamoji.workshops')||localStorage.getItem('stea.v1')||'{}')}catch(e){return{}}},
+  w:function(d){localStorage.setItem('steamoji.workshops',JSON.stringify(d))},
+  i:function(){var d=this.r();d.members=d.members||{};d.sessions=d.sessions||[];d.regmeta=d.regmeta||{};this.w(d)},
+  members:function(){return this.r().members||{}},
+  getM:function(b){var m=this.members()[b];if(!m) return null;if(typeof m==='string') return {first:m};return m},
+  saveM:function(b,data){var d=this.r();d.members=d.members||{};d.members[String(b)]=data;this.w(d)},
+  sessions:function(){return this.r().sessions||[]},
+  saveS:function(list){var d=this.r();d.sessions=list;this.w(d)},
+  meta:function(){return this.r().regmeta||{}},
+  setMeta:function(k,v){var d=this.r();d.regmeta=d.regmeta||{};d.regmeta[k]=v;this.w(d)}
+};
+DB.i();
+var tabs=[].slice.call(document.querySelectorAll('.tab'));
+var sections={register:$('register'),attendance:$('attendance'),admin:$('admin'),scan:$('scanPage')};
+function showTab(name){tabs.forEach(function(t){t.classList.toggle('active',t.getAttribute('data-tab')===name)});for(var k in sections){sections[k].classList.add('hidden')}sections[name].classList.remove('hidden');if(name==='attendance'){setupAttendanceButtons();refreshAttendance()}if(name==='scan'){setupScannerButtons()}if(name==='admin'){refreshAdmin();setTimeout(setupAdminButtons,100)}if(name==='register'){loadSessionsFromSheets()}}
+var adminUnlocked=false;
+function leaveAdmin(){adminUnlocked=false}
+
+// URL routing function
+function routeToPage(page){
+  // Handle admin password check before routing
+  if(page === 'admin' && !adminUnlocked){
+    passwordDialog('Enter admin password').then(function(code){
+      if(code!==ADMIN_PASS){
+        alert('Incorrect password');
+        // Route back to register if password is wrong
+        routeToPage('register');
+        return;
+      }
+      adminUnlocked=true;
+      // Update URL and show page (use same routing logic)
+      var currentPath = window.location.pathname;
+      var isVercel = currentPath === '/' || currentPath === '/attendance' || currentPath === '/admin' || currentPath === '/register';
+      if(isVercel){
+        window.history.pushState({page: 'admin'}, '', '/admin');
+      } else {
+        window.history.pushState({page: 'admin'}, '', window.location.pathname + '#admin');
+      }
+      showTab('admin');
+    });
+    return; // Don't proceed until password is verified
+  }
+  
+  // Reset admin unlock when leaving admin page
+  if(page !== 'admin'){
+    adminUnlocked = false;
+  }
+  
+  // Update URL - use hash for better compatibility with Python server
+  // For Vercel, path-based routing will work, but hash also works
+  var currentPath = window.location.pathname;
+  var isVercel = currentPath === '/' || currentPath === '/attendance' || currentPath === '/admin' || currentPath === '/register';
+  
+  if(isVercel){
+    // Use path-based routing for Vercel
+    var newPath = '/' + page;
+    if(currentPath !== newPath){
+      window.history.pushState({page: page}, '', newPath);
+    }
+  } else {
+    // Use hash-based routing for Python server and local files
+    var newHash = '#' + page;
+    if(window.location.hash !== newHash){
+      window.history.pushState({page: page}, '', window.location.pathname + newHash);
+    }
+  }
+  
+  showTab(page);
+}
+
+// Handle browser back/forward buttons
+window.addEventListener('popstate', function(event){
+  var path = window.location.pathname;
+  var hash = window.location.hash;
+  
+  // Check hash first (for Python server)
+  if(hash){
+    var page = hash.substring(1);
+    if(page === 'attendance' || page === 'admin' || page === 'register'){
+      routeToPage(page);
+      return;
+    }
+  }
+  
+  // Check path (for Vercel)
+  if(path === '/attendance' || path.endsWith('/attendance')){
+    routeToPage('attendance');
+  } else if(path === '/admin' || path.endsWith('/admin')){
+    routeToPage('admin');
+  } else {
+    routeToPage('register');
+  }
+});
+
+// Initial routing on page load
+function initRouting(){
+  var path = window.location.pathname;
+  var hash = window.location.hash;
+  
+  // Handle hash-based routing (works better with Python server)
+  if(hash){
+    var page = hash.substring(1); // Remove the #
+    if(page === 'attendance' || page === 'admin' || page === 'register'){
+      routeToPage(page);
+      return;
+    }
+  }
+  
+  // Handle path-based routing (works with Vercel)
+  if(path === '/attendance' || path.endsWith('/attendance')){
+    routeToPage('attendance');
+  } else if(path === '/admin' || path.endsWith('/admin')){
+    routeToPage('admin');
+  } else {
+    // Default to register page
+    showTab('register');
+    // Only update URL if we're not on the root path (to avoid issues with Python server)
+    if(path !== '/' && !path.includes('.html')){
+      window.history.replaceState({page: 'register'}, '', window.location.pathname + '#register');
+    }
+  }
+}
+
+// Initialize routing when DOM is ready
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initRouting);
+} else {
+  initRouting();
+}
+
+// Also handle hash changes (for Python server compatibility)
+window.addEventListener('hashchange', function(){
+  var hash = window.location.hash.substring(1);
+  if(hash === 'attendance' || hash === 'admin' || hash === 'register'){
+    routeToPage(hash);
+  }
+});
+// Google Sheets API functions
+var GOOGLE_SHEETS = config.GOOGLE_SHEETS;
+var selectedMember = null;
+// Global sessions array (loaded from Google Sheets, not local storage)
+var sessionsCache = [];
+// Cache for registrations to avoid repeated API calls
+var registrationsCache = {
+  data: [],
+  timestamp: 0,
+  ttl: 30000 // 30 seconds cache
+};
+
+function lookupMembersByEmail(email){
+  return new Promise(function(resolve,reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      // Fallback: return empty array if not configured
+      resolve([]);
+      return;
+    }
+    
+    var url = GOOGLE_SHEETS.API_URL + '?action=lookup&email=' + encodeURIComponent(email);
+    
+    fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+      .then(function(r){
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.json();
+      })
+      .then(function(data){
+        if(data.success && data.members){
+          resolve(data.members);
+        } else {
+          resolve([]);
+        }
+      })
+      .catch(function(err){
+        console.error('lookupMembersByEmail: Error', err);
+        if(err.message && (err.message.includes('CORS') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))){
+          console.error('CORS error detected in lookupMembersByEmail');
+        }
+        resolve([]);
+      });
+  });
+}
+
+function getValidationData(){
+  return new Promise(function(resolve,reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      resolve([]);
+      return;
+    }
+    
+    var url = GOOGLE_SHEETS.API_URL + '?action=getValidation';
+    
+    fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+      .then(function(r){
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.json();
+      })
+      .then(function(data){
+        if(data.success && data.members){
+          resolve(data.members);
+        } else {
+          resolve([]);
+        }
+      })
+      .catch(function(err){
+        console.error('getValidationData: Error', err);
+        resolve([]);
+      });
+  });
+}
+
+function updateValidationMember(memberData){
+  return new Promise(function(resolve,reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      reject(new Error('Google Sheets not configured'));
+      return;
+    }
+    
+    var url = GOOGLE_SHEETS.API_URL + '?action=updateValidation';
+    var payload = JSON.stringify(memberData);
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: payload
+    })
+      .then(function(r){
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.text().then(function(text){
+          try {
+            return JSON.parse(text);
+          } catch(e) {
+            return {success: true, message: text};
+          }
+        });
+      })
+      .then(function(data){
+        if(data.success){
+          resolve(data);
+        } else {
+          reject(new Error(data.error || 'Failed to update member'));
+        }
+      })
+      .catch(function(err){
+        console.error('updateValidationMember: Error', err);
+        reject(err);
+      });
+  });
+}
+
+function deleteValidationMember(rowIndex){
+  return new Promise(function(resolve,reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      reject(new Error('Google Sheets not configured'));
+      return;
+    }
+    
+    var url = GOOGLE_SHEETS.API_URL + '?action=deleteValidation&rowIndex=' + encodeURIComponent(rowIndex);
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: JSON.stringify({rowIndex: rowIndex})
+    })
+      .then(function(r){
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.text().then(function(text){
+          try {
+            return JSON.parse(text);
+          } catch(e) {
+            return {success: true, message: text};
+          }
+        });
+      })
+      .then(function(data){
+        if(data.success){
+          resolve(data);
+        } else {
+          reject(new Error(data.error || 'Failed to delete member'));
+        }
+      })
+      .catch(function(err){
+        console.error('deleteValidationMember: Error', err);
+        reject(err);
+      });
+  });
+}
+
+function getRegistrationsFromSheets(forceRefresh){
+  return new Promise(function(resolve,reject){
+    // Check cache first (unless force refresh)
+    var now = Date.now();
+    if(!forceRefresh && registrationsCache.data.length > 0 && (now - registrationsCache.timestamp) < registrationsCache.ttl){
+      resolve(registrationsCache.data);
+      return;
+    }
+    
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      resolve([]);
+      return;
+    }
+    
+    var action = encodeURIComponent('getRegistrations');
+    var url = GOOGLE_SHEETS.API_URL + '?action=' + action;
+    
+    fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+      .then(function(r){
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.json();
+      })
+      .then(function(data){
+        if(data.success && data.registrations){
+          // Update cache
+          registrationsCache.data = data.registrations;
+          registrationsCache.timestamp = Date.now();
+          resolve(data.registrations);
+        } else {
+          resolve([]);
+        }
+      })
+      .catch(function(err){
+        console.error('getRegistrationsFromSheets: Error', err);
+        // Return cached data if available, even if expired
+        if(registrationsCache.data.length > 0){
+          resolve(registrationsCache.data);
+        } else {
+          resolve([]);
+        }
+      });
+  });
+}
+
+function getSessionsFromSheets(){
+  return new Promise(function(resolve,reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      resolve([]);
+      return;
+    }
+    
+    // Ensure action parameter is properly encoded
+    // Build URL with action parameter (handle case where URL already has params)
+    var url = GOOGLE_SHEETS.API_URL;
+    var separator = url.indexOf('?') === -1 ? '?' : '&';
+    url = url + separator + 'action=getSessions';
+    
+    fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+      .then(function(r){
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.json();
+      })
+      .then(function(data){
+        if(data && data.success && data.sessions){
+          resolve(data.sessions);
+        } else {
+          if(data && data.error){
+            console.error('Google Apps Script error:', data.error);
+          }
+          resolve([]);
+        }
+      })
+      .catch(function(err){
+        console.error('getSessionsFromSheets: Fetch error', err);
+        if(err.message && (err.message.includes('CORS') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))){
+          console.error('CORS error detected in getSessionsFromSheets');
+        }
+        resolve([]);
+      });
+  });
+}
+
+function saveSessionToSheets(sessionData){
+  return new Promise(function(resolve,reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      resolve({success:true});
+      return;
+    }
+    
+    
+    // Send JSON as text/plain to avoid CORS preflight (Google Apps Script will parse it as JSON)
+    // Action is in URL parameter, URL encoded for safety
+    var payload = JSON.stringify(sessionData);
+    var action = encodeURIComponent('saveSession');
+    var url = GOOGLE_SHEETS.API_URL + '?action=' + action;
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: payload
+    })
+      .then(function(r){
+        if(r.status === 405){
+          throw new Error('405 Method Not Allowed: Make sure your Google Apps Script Web App is deployed (not in dev mode) and URL ends with /exec');
+        }
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.text().then(function(text){
+          try {
+            return JSON.parse(text);
+          } catch(e) {
+            console.warn('Response is not JSON, treating as success');
+            return {success: true, message: text};
+          }
+        });
+      })
+      .then(function(data){
+        if(data.success){
+          resolve(data);
+        } else {
+          reject(new Error(data.error || 'Failed to save session'));
+        }
+      })
+      .catch(function(err){
+        console.error('saveSessionToSheets: Error', err);
+        var errorMsg = err.message || 'Unknown error';
+        if(errorMsg.includes('405') || errorMsg.includes('Method Not Allowed')){
+          reject(new Error('405 Error: Your Google Apps Script Web App may not be properly deployed. Make sure:\n1. The URL ends with /exec (not /dev)\n2. Deployment is set to "Anyone" access\n3. You redeployed after code changes'));
+        } else if(errorMsg.includes('CORS') || errorMsg.includes('Failed to fetch') || errorMsg.includes('NetworkError') || errorMsg.includes('blocked by CORS')){
+          var corsMsg = 'CORS Error: Make sure:\n1. Web App is deployed with "Anyone" access\n2. URL ends with /exec\n3. Try redeploying the Web App';
+          reject(new Error(corsMsg));
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
+function saveAllSessionsToSheets(sessions){
+  return new Promise(function(resolve,reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      resolve({success:true});
+      return;
+    }
+    
+    
+    // Send JSON as text/plain to avoid CORS preflight (Google Apps Script will parse it as JSON)
+    // Action is in URL parameter, URL encoded for safety
+    var payload = JSON.stringify(sessions);
+    var action = encodeURIComponent('saveAllSessions');
+    var url = GOOGLE_SHEETS.API_URL + '?action=' + action;
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: payload
+    })
+      .then(function(r){
+        if(r.status === 405){
+          throw new Error('405 Method Not Allowed: Make sure your Google Apps Script Web App is deployed (not in dev mode) and URL ends with /exec');
+        }
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.text().then(function(text){
+          try {
+            return JSON.parse(text);
+          } catch(e) {
+            console.warn('Response is not JSON, treating as success');
+            return {success: true, message: text};
+          }
+        });
+      })
+      .then(function(data){
+        if(data.success){
+          resolve(data);
+        } else {
+          reject(new Error(data.error || 'Failed to save sessions'));
+        }
+      })
+      .catch(function(err){
+        console.error('saveAllSessionsToSheets: Error', err);
+        var errorMsg = err.message || 'Unknown error';
+        if(errorMsg.includes('405') || errorMsg.includes('Method Not Allowed')){
+          reject(new Error('405 Error: Your Google Apps Script Web App may not be properly deployed. Make sure:\n1. The URL ends with /exec (not /dev)\n2. Deployment is set to "Anyone" access\n3. You redeployed after code changes'));
+        } else if(errorMsg.includes('CORS') || errorMsg.includes('Failed to fetch') || errorMsg.includes('NetworkError') || errorMsg.includes('blocked by CORS')){
+          var corsMsg = 'CORS Error: Use a web server (not file://). Try: python -m http.server 8000';
+          reject(new Error(corsMsg));
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
+function deleteSessionFromSheets(sessionId){
+  return new Promise(function(resolve,reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      resolve({success:true});
+      return;
+    }
+    
+    
+    // Send JSON as text/plain to avoid CORS preflight (Google Apps Script will parse it as JSON)
+    // Action and sessionId are in URL parameter, URL encoded for safety
+    var payload = JSON.stringify({ sessionId: sessionId });
+    var action = encodeURIComponent('deleteSession');
+    var url = GOOGLE_SHEETS.API_URL + '?action=' + action + '&sessionId=' + encodeURIComponent(sessionId);
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: payload
+    })
+      .then(function(r){
+        if(r.status === 405){
+          throw new Error('405 Method Not Allowed: Make sure your Google Apps Script Web App is deployed (not in dev mode) and URL ends with /exec');
+        }
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.text().then(function(text){
+          try {
+            return JSON.parse(text);
+          } catch(e) {
+            console.warn('Response is not JSON, treating as success');
+            return {success: true, message: text};
+          }
+        });
+      })
+      .then(function(data){
+        if(data.success){
+          resolve(data);
+        } else {
+          reject(new Error(data.error || 'Failed to delete session'));
+        }
+      })
+      .catch(function(err){
+        console.error('deleteSessionFromSheets: Error', err);
+        var errorMsg = err.message || 'Unknown error';
+        if(errorMsg.includes('405') || errorMsg.includes('Method Not Allowed')){
+          reject(new Error('405 Error: Your Google Apps Script Web App may not be properly deployed. Make sure:\n1. The URL ends with /exec (not /dev)\n2. Deployment is set to "Anyone" access\n3. You redeployed after code changes'));
+        } else if(errorMsg.includes('CORS') || errorMsg.includes('Failed to fetch') || errorMsg.includes('NetworkError') || errorMsg.includes('blocked by CORS')){
+          var corsMsg = 'CORS Error: Use a web server (not file://). Try: python -m http.server 8000';
+          reject(new Error(corsMsg));
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
+function saveRegistrationToSheets(registrationData){
+  return new Promise(function(resolve,reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      // Fallback: just resolve if not configured
+      resolve({success:true});
+      return;
+    }
+    
+    // Check if running from file:// protocol
+    var isFileProtocol = window.location.protocol === 'file:';
+    if(isFileProtocol){
+      console.warn('Running from file:// protocol - CORS may fail. Use a web server instead.');
+    }
+    
+    
+    // Send JSON as text/plain to avoid CORS preflight (Google Apps Script will parse it as JSON)
+    // Action is in URL parameter, URL encoded for safety
+    var payload = JSON.stringify(registrationData);
+    var action = encodeURIComponent('register');
+    var url = GOOGLE_SHEETS.API_URL + '?action=' + action;
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: payload
+    })
+      .then(function(r){
+        if(r.status === 405){
+          throw new Error('405 Method Not Allowed: Make sure your Google Apps Script Web App is deployed (not in dev mode) and URL ends with /exec');
+        }
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.text().then(function(text){
+          try {
+            return JSON.parse(text);
+          } catch(e) {
+            console.warn('Response is not JSON, treating as success');
+            return {success: true, message: text};
+          }
+        });
+      })
+      .then(function(data){
+        if(data.success){
+          resolve(data);
+        } else {
+          reject(new Error(data.error || 'Failed to save'));
+        }
+      })
+      .catch(function(err){
+        console.error('saveRegistrationToSheets: Error', err);
+        var errorMsg = err.message || 'Unknown error';
+        
+        // Check for specific error types
+        if(errorMsg.includes('405') || errorMsg.includes('Method Not Allowed')){
+          reject(new Error('405 Error: Your Google Apps Script Web App may not be properly deployed. Make sure:\n1. The URL ends with /exec (not /dev)\n2. Deployment is set to "Anyone" access\n3. You redeployed after code changes'));
+        } else if(errorMsg.includes('CORS') || errorMsg.includes('Failed to fetch') || errorMsg.includes('NetworkError') || errorMsg.includes('blocked by CORS')){
+          var corsMsg = 'CORS Error Detected:\n';
+          corsMsg += '1. Make sure you\'re using a web server (not opening file:// directly)\n';
+          corsMsg += '2. Your Google Apps Script Web App is deployed with "Anyone" access\n';
+          corsMsg += '3. The Web App URL ends with /exec\n';
+          corsMsg += '\nTry: python -m http.server 8000 (then open http://localhost:8000)';
+          reject(new Error(corsMsg));
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
+// Helper functions to get members from Google Sheets
+function getMembersFromRegistrations(registrations) {
+  // Extract unique members from registrations
+  // Use registration ID as the unique key since each registration has a unique ID
+  var membersMap = {};
+  if (registrations && Array.isArray(registrations)) {
+    registrations.forEach(function(reg) {
+      var regId = reg.id || '';
+      if (!regId) return; // Skip if no registration ID
+      
+      var badgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
+      var firstName = reg.firstName || reg['First Name'] || reg['firstName'] || '';
+      var lastName = reg.lastName || reg['Last Name'] || reg['lastName'] || '';
+      var parentEmail = reg.parentEmail || reg['Parent Email'] || reg['parentEmail'] || reg.email || '';
+      
+      // Use registration ID as unique key
+      if (!membersMap[regId]) {
+        membersMap[regId] = {
+          badge: badgeId, // Keep badgeId for display, even if empty
+          first: firstName,
+          last: lastName,
+          name: (firstName + ' ' + lastName).trim() || '(no name)',
+          phone: reg.phone || reg['Phone'] || '',
+          email: parentEmail,
+          regId: regId // Store registration ID for reference
+        };
+      }
+    });
+  }
+  console.log('getMembersFromRegistrations: Created map with', Object.keys(membersMap).length, 'unique members from', registrations ? registrations.length : 0, 'registrations');
+  return membersMap;
+}
+
+function getMemberNameFromRegistrations(badgeId, registrations) {
+  var membersMap = getMembersFromRegistrations(registrations);
+  var member = membersMap[badgeId];
+  if (member) {
+    return member.name;
+  }
+  return '';
+}
+
+// Email registration handlers
+function searchByEmail(){
+  var email = $('regEmail').value.trim().toLowerCase();
+  if(!email){
+    alert('Please enter an email address');
+    return;
+  }
+  
+  $('emailStatus').textContent = 'Looking up members...';
+  $('emailStatus').style.color = '';
+  $('memberSelection').classList.add('hidden');
+  $('regDetails').classList.add('hidden');
+  selectedMember = null;
+  
+  lookupMembersByEmail(email).then(function(members){
+    if(members.length === 0){
+      $('emailStatus').textContent = 'Member not found. Please contact us.';
+      $('emailStatus').style.color = 'var(--danger)';
+      // Hide all registration options
+      $('memberSelection').classList.add('hidden');
+      $('regDetails').classList.add('hidden');
+      selectedMember = null;
+    } else if(members.length === 1){
+      // Auto-select if only one member
+      selectMember(members[0]);
+      $('emailStatus').textContent = 'Member found!';
+      $('emailStatus').style.color = 'var(--primary-blue)';
+    } else {
+      // Show selection list
+      showMemberSelection(members);
+      $('emailStatus').textContent = 'Multiple members found. Please select one.';
+      $('emailStatus').style.color = 'var(--primary-blue)';
+    }
+  }).catch(function(err){
+    console.error('Search error:', err);
+    $('emailStatus').textContent = 'Error searching. Please try again.';
+    $('emailStatus').style.color = 'var(--danger)';
+    $('memberSelection').classList.add('hidden');
+    $('regDetails').classList.add('hidden');
+  });
+}
+
+$('searchEmailBtn').onclick = searchByEmail;
+$('regEmail').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    searchByEmail();
+  }
+});
+
+function showMemberSelection(members){
+  var list = $('memberList');
+  list.innerHTML = '';
+  members.forEach(function(member){
+    var row = document.createElement('div');
+    row.className = 'item';
+    row.innerHTML = '<div><div style="font-weight:600">' + (member.firstName || '') + ' ' + (member.lastName || '') + '</div><div class="caption muted">Age: ' + (member.age || 'N/A') + ' • House: ' + (member.house || 'N/A') + ' • Level: ' + (member.level || 'N/A') + '</div></div>';
+    var btn = document.createElement('button');
+    btn.className = 'primary';
+    btn.textContent = 'Select';
+    btn.onclick = function(){selectMember(member);};
+    row.appendChild(btn);
+    list.appendChild(row);
+  });
+  $('memberSelection').classList.remove('hidden');
+}
+
+function selectMember(member){
+  selectedMember = member;
+  $('regFirst').value = member.firstName || '';
+  $('regLast').value = member.lastName || '';
+  $('regBadge').value = member.badgeId || '';
+  $('regAge').value = member.age || '';
+  $('memberSelection').classList.add('hidden');
+  $('regDetails').classList.remove('hidden');
+  buildEligible();
+}
+
+// Pagination state for eligible sessions
+var eligibleSessionsData = {
+  allItems: [],
+  currentPage: 1,
+  itemsPerPage: 5
+};
+
+// Pagination state for admin sessions
+var adminSessionsData = {
+  currentPage: 1,
+  itemsPerPage: 10
+};
+
+function buildEligible(){
+  if(!selectedMember) {
+    var box = $('eligible');
+    if(box) box.innerHTML = '<div class="muted">Please select a member first.</div>';
+    $('eligiblePagination').style.display = 'none';
+    return;
+  }
+  
+  var badgeId = selectedMember.badgeId || '';
+  var parentEmail = $('regEmail').value.trim().toLowerCase() || '';
+  
+  var box = $('eligible');
+  if(!box){
+    console.error('buildEligible: eligible element not found!');
+    return;
+  }
+  
+  box.innerHTML = '<div class="caption muted">Loading sessions...</div>';
+  $('eligiblePagination').style.display = 'none';
+  
+  // If sessionsCache is empty, load sessions from Google Sheets first
+  if(sessionsCache.length === 0){
+    loadSessionsFromSheets().then(function(){
+      buildEligible();
+    }).catch(function(err){
+      console.error('Error loading sessions:', err);
+      box.innerHTML = '<div class="muted">Error loading sessions. Please try again.</div>';
+    });
+    return;
+  }
+  
+  var upcomingSessions = listUpcoming();
+  
+  if(upcomingSessions.length === 0){
+    box.innerHTML = '<div class="muted">No sessions available.</div>';
+    $('eligiblePagination').style.display = 'none';
+    return;
+  }
+  
+  // Clear capacity cache when rebuilding
+  capacityCache = {};
+  
+  // Get registrations from Google Sheets (use cache if available)
+  getRegistrationsFromSheets().then(function(sheetRegs){
+    // Ensure sheetRegs is an array (handle empty sheets or errors)
+    if(!sheetRegs || !Array.isArray(sheetRegs)){
+      sheetRegs = [];
+    }
+    
+    // Filter eligible sessions (optimized - cache results)
+    var items = [];
+    var sessionDateCache = {};
+    var sessionTimeCache = {};
+    
+    for(var i = 0; i < upcomingSessions.length; i++){
+      var s = upcomingSessions[i];
+      
+      // Cache session date/time strings to avoid repeated calculations
+      var sessionDateKey = new Date(s.dt).toISOString().slice(0,10);
+      var sessionTimeKey = new Date(s.dt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      
+      // Check capacity from Google Sheets (max 10 per session)
+      var seatsLeft = capLeftFromSheets(s, sheetRegs);
+      
+      // Check if this specific kid already registered this month
+      var alreadyRegisteredThisMonth = kidRegisteredForMonthFromSheets(selectedMember, parentEmail, s.dt, sheetRegs);
+      
+      // Also check local storage for backward compatibility (only if badgeId exists)
+      var localReg = badgeId ? ((s.reg || []).indexOf(badgeId) > -1) : false;
+      var localMonthReg = badgeId ? registeredForMonth(badgeId, s.dt) : false;
+      
+      var isEligible = seatsLeft > 0 && !alreadyRegisteredThisMonth && !localReg && !localMonthReg;
+      
+      if(isEligible){
+        items.push({
+          session: s,
+          seatsLeft: seatsLeft
+        });
+      }
+    }
+    
+    // Store all items for pagination
+    eligibleSessionsData.allItems = items;
+    eligibleSessionsData.currentPage = 1;
+    
+    // Render paginated view
+    renderEligibleSessions();
+  }).catch(function(err){
+    console.error('Error loading sessions:', err);
+    box.innerHTML = '<div class="muted">Error loading sessions. Please try again.</div>';
+    $('eligiblePagination').style.display = 'none';
+  });
+}
+
+function renderEligibleSessions(){
+  var box = $('eligible');
+  var pagination = $('eligiblePagination');
+  var items = eligibleSessionsData.allItems;
+  var currentPage = eligibleSessionsData.currentPage;
+  var itemsPerPage = eligibleSessionsData.itemsPerPage;
+  var totalPages = Math.ceil(items.length / itemsPerPage);
+  
+  if(!items.length){
+    var message = 'No eligible sessions available.';
+    box.innerHTML = '<div class="muted">' + message + '</div>';
+    pagination.style.display = 'none';
+    return;
+  }
+  
+  // Calculate pagination
+  var startIndex = (currentPage - 1) * itemsPerPage;
+  var endIndex = Math.min(startIndex + itemsPerPage, items.length);
+  var pageItems = items.slice(startIndex, endIndex);
+  
+  // Clear and render using document fragment for better performance
+  box.innerHTML = '';
+  var fragment = document.createDocumentFragment();
+  
+  for(var i = 0; i < pageItems.length; i++){
+    var item = pageItems[i];
+    var s = item.session;
+    var seatsLeft = item.seatsLeft;
+    
+    var row = document.createElement('div');
+    row.className = 'item';
+    row.innerHTML = '<div><div>' + title(s) + '</div><div class="caption muted">Seats left: ' + seatsLeft + ' / 10</div></div>';
+    var btn = document.createElement('button');
+    btn.className = 'primary';
+    btn.textContent = 'Register';
+    btn.onclick = function(session){
+      return function(){
+        registerForSession(session, selectedMember);
+      };
+    }(s);
+    row.appendChild(btn);
+    fragment.appendChild(row);
+  }
+  
+  box.appendChild(fragment);
+  
+    // Update pagination controls
+    if(totalPages > 1){
+      pagination.style.display = 'flex';
+      $('pageInfo').textContent = 'Page ' + currentPage + ' of ' + totalPages + ' (' + items.length + ' total)';
+      $('prevPage').disabled = currentPage === 1;
+      $('nextPage').disabled = currentPage === totalPages;
+      
+      // Style disabled buttons (primary theme with reduced opacity)
+      if(currentPage === 1){
+        $('prevPage').style.opacity = '0.5';
+        $('prevPage').style.cursor = 'not-allowed';
+        $('prevPage').style.pointerEvents = 'none';
+      } else {
+        $('prevPage').style.opacity = '1';
+        $('prevPage').style.cursor = 'pointer';
+        $('prevPage').style.pointerEvents = 'auto';
+      }
+      
+      if(currentPage === totalPages){
+        $('nextPage').style.opacity = '0.5';
+        $('nextPage').style.cursor = 'not-allowed';
+        $('nextPage').style.pointerEvents = 'none';
+      } else {
+        $('nextPage').style.opacity = '1';
+        $('nextPage').style.cursor = 'pointer';
+        $('nextPage').style.pointerEvents = 'auto';
+      }
+    } else {
+      pagination.style.display = 'none';
+    }
+}
+
+// Pagination event handlers
+$('prevPage').onclick = function(){
+  if(eligibleSessionsData.currentPage > 1){
+    eligibleSessionsData.currentPage--;
+    renderEligibleSessions();
+    // Scroll to top of eligible section
+    $('eligible').scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+};
+
+$('nextPage').onclick = function(){
+  var totalPages = Math.ceil(eligibleSessionsData.allItems.length / eligibleSessionsData.itemsPerPage);
+  if(eligibleSessionsData.currentPage < totalPages){
+    eligibleSessionsData.currentPage++;
+    renderEligibleSessions();
+    // Scroll to top of eligible section
+    $('eligible').scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+};
+
+
+function registerForSession(session, member){
+  var email = $('regEmail').value.trim().toLowerCase();
+  if(!email){
+    alert('Email is required');
+    return;
+  }
+  
+  // Member must be selected (from search results)
+  if(!member){
+    alert('Please search for your email and select a member to register.');
+    return;
+  }
+  
+  var badgeId = member.badgeId || '';
+  // BadgeId is optional - will be assigned later during attendance
+  
+  // Double-check capacity and monthly limit before registering
+  getRegistrationsFromSheets().then(function(sheetRegs){
+    // Ensure sheetRegs is an array (handle empty sheets or errors)
+    if(!sheetRegs || !Array.isArray(sheetRegs)){
+      sheetRegs = [];
+    }
+    
+    var seatsLeft = capLeftFromSheets(session, sheetRegs);
+    if(seatsLeft <= 0){
+      alert('This session is full. Please select another session.');
+      buildEligible(); // Refresh the list
+      return;
+    }
+    
+    // Check monthly limit - by specific kid (badgeId or firstName+lastName+parentEmail)
+    // This allows multiple kids from the same parent to register separately
+    var alreadyRegisteredThisMonth = kidRegisteredForMonthFromSheets(member, email, session.dt, sheetRegs);
+    
+    if(alreadyRegisteredThisMonth){
+      alert('This member has already registered for a session this month. Each member can only register for one session per month.');
+      buildEligible(); // Refresh the list
+      return;
+    }
+    
+    // Proceed with registration
+    proceedWithRegistration(session, member, email);
+  }).catch(function(err){
+    console.error('Error checking registration:', err);
+    // If there's an error, still allow registration (might be first time, empty sheet)
+    // But show a warning
+    if(confirm('Unable to verify session availability. Do you want to proceed with registration?')){
+      proceedWithRegistration(session, member, email);
+    }
+  });
+}
+
+function proceedWithRegistration(session, member, email){
+  // Ensure sessionId is set
+  if(!session || !session.id){
+    alert('Error: Session ID is missing. Please try selecting the session again.');
+    return;
+  }
+  
+  var registrationData = {
+    badgeId: member.badgeId || '',
+    firstName: member.firstName || '',
+    lastName: member.lastName || '',
+    familyRole: member.familyRole || '',
+    age: member.age || '',
+    house: member.house || '',
+    level: member.level || '',
+    school: member.school || '',
+    parent: member.parent || '',
+    parentEmail: email,
+    sessionId: session.id, // Ensure sessionId is always set
+    sessionDate: new Date(session.dt).toISOString().slice(0,10),
+    sessionTime: new Date(session.dt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+    sessionTopic: session.topic || '',
+    registeredBy: email, // Online registration - use parent email
+    registeredDateAndTime: new Date().toISOString()
+  };
+  
+  
+  // Disable register buttons to prevent double submission
+  var registerBtns = document.querySelectorAll('#eligible button');
+  registerBtns.forEach(function(btn){ 
+    btn.disabled = true; 
+    btn.textContent = 'Registering...'; 
+  });
+  
+  // Save to Google Sheets
+  saveRegistrationToSheets(registrationData).then(function(response){
+    // Invalidate registrations cache since we just added a new registration
+    registrationsCache.timestamp = 0;
+    capacityCache = {};
+    
+    // Get the registration ID from the response (generated by Google Apps Script)
+    var registrationId = response.id || registrationData.id;
+    
+    if(registrationId){
+      // Update the session in Google Sheets to add this registration ID to the reg array
+      updateSessionAfterRegistration(session.id, registrationId).then(function(result){
+      }).catch(function(err){
+        console.error('Error updating session:', err);
+        console.error('Error details:', err.message || err);
+        // Fallback: update local session with ID
+        session.reg = session.reg || [];
+        if(session.reg.indexOf(registrationId) === -1){
+          session.reg.push(registrationId);
+          saveSession(session);
+        }
+      });
+    } else {
+      console.warn('No registration ID returned from server. Response:', response);
+      alert('Warning: Registration saved but session may not be updated. Please check the session sheet manually.');
+    }
+    
+    // Also save to local storage for backward compatibility
+    var badgeId = member.badgeId;
+    if(badgeId){
+      session.reg = session.reg || [];
+      if(session.reg.indexOf(badgeId) === -1){
+        session.reg.push(badgeId);
+        saveSession(session);
+      }
+    }
+    
+    // Show success message
+    showSuccess('Registration Successful!');
+    showToast('Registration saved to Google Sheets');
+    
+    // Refresh eligible sessions
+    buildEligible();
+    
+    // Re-enable buttons
+    registerBtns.forEach(function(btn){ 
+      btn.disabled = false; 
+      btn.textContent = 'Register'; 
+    });
+  }).catch(function(err){
+    console.error('Registration error:', err);
+    
+    // Re-enable buttons
+    registerBtns.forEach(function(btn){ 
+      btn.disabled = false; 
+      btn.textContent = 'Register'; 
+    });
+    
+    alert('Error saving to Google Sheets: ' + (err.message || 'Unknown error') + '\n\nPlease try again or contact support.');
+  });
+}
+
+$('clearReg').onclick = function(){
+  $('regEmail').value = '';
+  $('emailStatus').textContent = '';
+  $('memberSelection').classList.add('hidden');
+  $('regDetails').classList.add('hidden');
+  selectedMember = null;
+};
+var manPickEl = $('manPick');
+if(manPickEl){
+  manPickEl.onclick=function(){secure(function(){pickSession(function(sel){$('manChoice').dataset.sid=sel?sel.id:'';$('manChoice').textContent=sel?('Chosen: '+title(sel)):'None'})})}
+}
+$('manReg').onclick=function(){
+  secure(function(){
+    var badge=$('manBadge').value.trim();
+    var first=$('manFirst').value.trim();
+    var last=$('manLast').value.trim();
+    var phone=$('manPhone').value.trim();
+    var email=$('manEmail').value.trim();
+    var sid=$('manChoice').dataset.sid;
+    if(!badge||!sid){alert('Badge and session required');return}
+    var s=sessionsCache.find(function(x){return x.id===sid});
+    if(!s){alert('Session missing');return}
+    if(registeredForMonth(badge,s.dt)){alert('Already has a session this month');return}
+    if((s.reg||[]).indexOf(badge)>-1){alert('Already registered for this session');return}
+    if(capLeft(s)<=0){alert('Session is full');return}
+    var adminName='Admin';
+    if(!DB.getM(badge)){
+      if(!validateNew({first:first,last:last,phone:phone,email:email})){alert('Enter first, last, phone, and email');return}
+      passwordDialog('Front desk authentication code').then(function(code){
+        var who=STAFF[code||''];
+        if(!who){alert('Authentication required');return}
+        adminName=who;
+        DB.saveM(badge,{first:first,last:last,phone:phone,email:email});
+        s.reg=s.reg||[];
+        s.reg.push(badge);
+        saveSession(s);
+        DB.setMeta(s.id+'|'+badge,{by:who,ts:Date.now()});
+        var member=DB.getM(badge);
+        var registrationData={
+          badgeId:badge,
+          firstName:member.first||first,
+          lastName:member.last||last,
+          familyRole:'',
+          age:'',
+          house:'',
+          level:'',
+          school:'',
+          parent:'',
+          parentEmail:email||'',
+          sessionId:s.id||'',
+          sessionDate:new Date(s.dt).toISOString().slice(0,10),
+          sessionTime:new Date(s.dt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+          sessionTopic:s.topic||'',
+          registeredBy:adminName,
+          registeredDateAndTime:new Date().toISOString()
+        };
+        saveRegistrationToSheets(registrationData).then(function(response){
+          // Update session in Google Sheets with registration ID
+          var registrationId = response.id || registrationData.id;
+          if(registrationId){
+            updateSessionAfterRegistration(s.id, registrationId).then(function(){
+              showToast('Registered');
+            }).catch(function(err){
+              console.error('Error updating session:', err);
+              showToast('Registered (session update failed)');
+            });
+          } else {
+            showToast('Registered');
+          }
+        }).catch(function(err){
+          console.error('Error saving to sheets:',err);
+          showToast('Registered (local only)');
+        });
+      });
+      return;
+    }
+    var member=DB.getM(badge);
+    passwordDialog('Front desk authentication code').then(function(code){
+      var who=STAFF[code||'']||'Admin';
+      adminName=who;
+      s.reg=s.reg||[];
+      s.reg.push(badge);
+      saveSession(s);
+      DB.setMeta(s.id+'|'+badge,{by:who,ts:Date.now()});
+      var registrationData={
+        badgeId:badge,
+        firstName:member.first||'',
+        lastName:member.last||'',
+        familyRole:'',
+        age:'',
+        house:'',
+        level:'',
+        school:'',
+        parent:'',
+        parentEmail:member.email||email||'',
+        sessionId:s.id||'',
+        sessionDate:new Date(s.dt).toISOString().slice(0,10),
+        sessionTime:new Date(s.dt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+        sessionTopic:s.topic||'',
+        registeredBy:adminName,
+        registeredDateAndTime:new Date().toISOString()
+      };
+      saveRegistrationToSheets(registrationData).then(function(response){
+        // Update session in Google Sheets with registration ID
+        var registrationId = response.id || registrationData.id;
+        if(registrationId){
+          updateSessionAfterRegistration(s.id, registrationId).then(function(){
+            showToast('Registered');
+          }).catch(function(err){
+            console.error('Error updating session:', err);
+            showToast('Registered (session update failed)');
+          });
+        } else {
+          showToast('Registered');
+        }
+      }).catch(function(err){
+        console.error('Error saving to sheets:',err);
+        showToast('Registered (local only)');
+      });
+    });
+  });
+}
+function registeredForMonth(badge,when){return sessionsCache.some(function(s){return (s.reg||[]).indexOf(badge)>-1 && sameMonth(s.dt,when)})}
+/**
+ * Helper function to update session in Google Sheets after registration
+ * Adds the registration ID to the session's reg array
+ */
+function updateSessionAfterRegistration(sessionId, registrationId){
+  return new Promise(function(resolve, reject){
+    if(!sessionId || !registrationId){
+      resolve({success: true, message: 'No sessionId or registrationId provided'});
+      return;
+    }
+    
+    // Get the current session data
+    getSessionsFromSheets().then(function(sessionsResult){
+      if(sessionsResult && sessionsResult.success && sessionsResult.sessions){
+        var sessionToUpdate = sessionsResult.sessions.find(function(s){
+          return s.id === sessionId;
+        });
+        
+        if(sessionToUpdate){
+          // Initialize reg array if it doesn't exist
+          if(!sessionToUpdate.reg || !Array.isArray(sessionToUpdate.reg)){
+            sessionToUpdate.reg = [];
+          }
+          
+          // Check if this registration ID already exists in reg array
+          var regExists = sessionToUpdate.reg.some(function(r){
+            // Handle both old format (badgeId string or full object) and new format (registration ID)
+            if(typeof r === 'string'){
+              // Could be badgeId (old format) or registration ID (new format)
+              // If it matches the registrationId, it's already there
+              return r === registrationId;
+            }
+            // If it's an object (old format), check by id field
+            if(r && r.id) return r.id === registrationId;
+            return false;
+          });
+          
+          if(!regExists){
+            // Add registration ID to session reg array (store just the ID, not full object)
+            sessionToUpdate.reg.push(registrationId);
+            // Save updated session to Google Sheets
+            saveSessionToSheets(sessionToUpdate).then(function(result){
+              resolve({success: true, message: 'Session updated', regCount: sessionToUpdate.reg.length});
+            }).catch(function(err){
+              console.error('Error saving session to Google Sheets:', err);
+              console.error('Error details:', err.message || err);
+              reject(err);
+            });
+          } else {
+            resolve({success: true, message: 'Registration already exists'});
+          }
+        } else {
+          console.warn('Session not found in sheets:', sessionId);
+          resolve({success: true, message: 'Session not found'});
+        }
+      } else {
+        console.warn('Could not fetch sessions');
+        resolve({success: true, message: 'Could not fetch sessions'});
+      }
+    }).catch(function(err){
+      console.error('Error fetching sessions for update:', err);
+      reject(err);
+    });
+  });
+}
+
+function registeredForMonthFromSheets(badgeId,when,sheetRegs){
+  // If no registrations data, user hasn't registered this month
+  if(!sheetRegs || !Array.isArray(sheetRegs) || sheetRegs.length === 0){
+    return false;
+  }
+  
+  var whenMonth = new Date(when).getMonth();
+  var whenYear = new Date(when).getFullYear();
+  return sheetRegs.some(function(r){
+    if(!r || r.badgeId !== badgeId) return false;
+    // Check session date (when the session is), not registration date
+    var sessionDate = null;
+    if(r.sessionDate){
+      sessionDate = new Date(r.sessionDate);
+    } else if(r.registeredDateAndTime){
+      // Fallback: use registration date if session date not available
+      sessionDate = new Date(r.registeredDateAndTime);
+    }
+    if(!sessionDate) return false;
+    return sessionDate.getMonth() === whenMonth && sessionDate.getFullYear() === whenYear;
+  });
+}
+
+/**
+ * Check if a specific kid (by badgeId or firstName+lastName+parentEmail) has registered this month
+ * This allows multiple kids from the same parent to register separately
+ */
+function kidRegisteredForMonthFromSheets(member, parentEmail, when, sheetRegs){
+  // If no registrations data, kid hasn't registered this month
+  if(!sheetRegs || !Array.isArray(sheetRegs) || sheetRegs.length === 0){
+    return false;
+  }
+  
+  var badgeId = member.badgeId || '';
+  var firstName = (member.firstName || '').toLowerCase().trim();
+  var lastName = (member.lastName || '').toLowerCase().trim();
+  var email = (parentEmail || '').toLowerCase().trim();
+  
+  var whenMonth = new Date(when).getMonth();
+  var whenYear = new Date(when).getFullYear();
+  
+  return sheetRegs.some(function(r){
+    if(!r) return false;
+    
+    // First check by badgeId if available (most reliable)
+    if(badgeId && r.badgeId && r.badgeId === badgeId){
+      var sessionDate = null;
+      if(r.sessionDate){
+        sessionDate = new Date(r.sessionDate);
+      } else if(r.registeredDateAndTime){
+        sessionDate = new Date(r.registeredDateAndTime);
+      }
+      if(!sessionDate) return false;
+      return sessionDate.getMonth() === whenMonth && sessionDate.getFullYear() === whenYear;
+    }
+    
+    // If no badgeId, check by firstName + lastName + parentEmail (unique kid identifier)
+    if(!badgeId && firstName && lastName && email){
+      var rFirstName = (r.firstName || '').toLowerCase().trim();
+      var rLastName = (r.lastName || '').toLowerCase().trim();
+      var rEmail = (r.parentEmail || '').toLowerCase().trim();
+      
+      if(rFirstName === firstName && rLastName === lastName && rEmail === email){
+        var sessionDate = null;
+        if(r.sessionDate){
+          sessionDate = new Date(r.sessionDate);
+        } else if(r.registeredDateAndTime){
+          sessionDate = new Date(r.registeredDateAndTime);
+        }
+        if(!sessionDate) return false;
+        return sessionDate.getMonth() === whenMonth && sessionDate.getFullYear() === whenYear;
+      }
+    }
+    
+    return false;
+  });
+}
+function pickSession(cb){var list=listUpcoming();if(!list.length){alert('No upcoming sessions');return cb(null)}var msg='Pick a session by number:\n'+list.map(function(s,i){return (i+1)+'. '+title(s)+' (left '+capLeft(s)+')'}).join('\n');var n=Number(prompt(msg,'1'));if(!(n>0&&n<=list.length))return cb(null);cb(list[n-1])}
+function secure(cb){passwordDialog('Enter admin password').then(function(code){ if(code===ADMIN_PASS){ if(cb) cb(); } else { alert('Incorrect password'); }});} 
+var attSel=$('attSelect');var attList=$('attList');var arrivals=$('arrivals');var scanId=null
+
+// Setup attendance button handlers
+function setupAttendanceButtons(){
+  var attGoBtn = $('attGo');
+  if(attGoBtn){
+    // Remove any existing handlers by cloning and replacing
+    var newAttGoBtn = attGoBtn.cloneNode(true);
+    attGoBtn.parentNode.replaceChild(newAttGoBtn, attGoBtn);
+    attGoBtn = newAttGoBtn;
+    attGoBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      // Get attSelect element fresh to ensure it exists
+      var attSelect = $('attSelect');
+      if(!attSelect){
+        alert('Session selector not found');
+        return;
+      }
+      var sid = attSelect.value;
+      if(!sid){
+        alert('Pick a session');
+        return;
+      }
+      openScan(sid);
+    };
+  }
+  
+  // Scanner buttons are now set up in setupScannerButtons() function
+}
+
+// Setup attendance and scanner buttons when DOM is ready
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', function(){
+    setupAttendanceButtons();
+    setupScannerButtons();
+  });
+} else {
+  setupAttendanceButtons();
+  setupScannerButtons();
+}
+// Setup scanner page button handlers
+function setupScannerButtons(){
+  // Print List button
+  var printListBtn = $('printList');
+  if(printListBtn){
+    var newPrintListBtn = printListBtn.cloneNode(true);
+    printListBtn.parentNode.replaceChild(newPrintListBtn, printListBtn);
+    printListBtn = newPrintListBtn;
+    printListBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      var s = sessionsCache.find(function(x){return x.id===scanId});
+      if(!s){
+        alert('Session not found');
+        return;
+      }
+      
+      // Get registrations from Google Sheets for this session
+      getRegistrationsFromSheets().then(function(registrations){
+        if(!registrations || !Array.isArray(registrations)){
+          registrations = [];
+        }
+        
+        // Filter registrations for this session
+        var sessionRegs = registrations.filter(function(reg){
+          var regSessionId = reg.sessionId || reg['Session ID'] || reg['sessionId'] || '';
+          return regSessionId === scanId;
+        });
+        
+        // Build rows with member names
+        var rows = [];
+        sessionRegs.forEach(function(reg, i){
+          var badgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
+          var firstName = reg.firstName || reg['First Name'] || reg['firstName'] || '';
+          var lastName = reg.lastName || reg['Last Name'] || reg['lastName'] || '';
+          var name = (firstName + ' ' + lastName).trim() || 'Unknown';
+          rows.push({i: i+1, badge: badgeId, name: name});
+        });
+        
+        // Fallback to old format if no registrations found
+        if(rows.length === 0 && s.reg && Array.isArray(s.reg)){
+          rows = s.reg.map(function(b,i){
+            return {i:i+1,badge:b,name:memberName(b)};
+          });
+        }
+        
+        var html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Participants</title><style>body{font-family:system-ui,Segoe UI,Roboto;padding:24px} h1{margin:0 0 8px} table{border-collapse:collapse;width:100%} th,td{border:1px solid #555;padding:8px;text-align:left}</style></head><body><h1>Participants</h1><div>'+title(s)+'</div><table><thead><tr><th>#</th><th>Name</th><th>Badge</th><th>Signature</th></tr></thead><tbody>'+rows.map(function(r){return '<tr><td>'+r.i+'</td><td>'+r.name+'</td><td>'+r.badge+'</td><td></td></tr>'}).join('\n')+'</tbody></table><script>window.print()<\/script></body></html>';
+        var w=window.open('','_blank');
+        w.document.write(html);
+        w.document.close();
+      }).catch(function(err){
+        console.error('Error loading registrations:', err);
+        alert('Error loading registration data');
+      });
+    };
+  }
+  
+  // Back button
+  var scanBackBtn = $('scanBack');
+  if(scanBackBtn){
+    var newScanBackBtn = scanBackBtn.cloneNode(true);
+    scanBackBtn.parentNode.replaceChild(newScanBackBtn, scanBackBtn);
+    scanBackBtn = newScanBackBtn;
+    scanBackBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      // Ensure attCtx is initialized
+      if(!attCtx || !attCtx.video){
+        attCtx = {video:$('video'),status:$('attStatus'),stream:null,det:null,scanning:false};
+      }
+      // Ensure attCtx is initialized
+      if(!attCtx || !attCtx.video){
+        attCtx = {video:$('video'),status:$('attStatus'),stream:null,det:null,scanning:false};
+      }
+      stopCam(attCtx);
+      scanId=null;
+      showTab('attendance');
+      refreshAttendance();
+    };
+  }
+  
+  // Start Camera button
+  var startScanAttBtn = $('startScanAtt');
+  if(startScanAttBtn){
+    var newStartScanAttBtn = startScanAttBtn.cloneNode(true);
+    startScanAttBtn.parentNode.replaceChild(newStartScanAttBtn, startScanAttBtn);
+    startScanAttBtn = newStartScanAttBtn;
+    startScanAttBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      // Ensure attCtx is initialized
+      if(!attCtx || !attCtx.video){
+        attCtx = {video:$('video'),status:$('attStatus'),stream:null,det:null,scanning:false};
+      }
+      startCam(attCtx,'att');
+    };
+  }
+  
+  // Stop Camera button
+  var stopScanAttBtn = $('stopScanAtt');
+  if(stopScanAttBtn){
+    var newStopScanAttBtn = stopScanAttBtn.cloneNode(true);
+    stopScanAttBtn.parentNode.replaceChild(newStopScanAttBtn, stopScanAttBtn);
+    stopScanAttBtn = newStopScanAttBtn;
+    stopScanAttBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      // Ensure attCtx is initialized
+      if(!attCtx || !attCtx.video){
+        attCtx = {video:$('video'),status:$('attStatus'),stream:null,det:null,scanning:false};
+      }
+      stopCam(attCtx);
+    };
+  }
+  
+  // Manual badge button
+  var attManualBtn = $('attManual');
+  if(attManualBtn){
+    var newAttManualBtn = attManualBtn.cloneNode(true);
+    attManualBtn.parentNode.replaceChild(newAttManualBtn, attManualBtn);
+    attManualBtn = newAttManualBtn;
+    attManualBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      var b=prompt('Enter badge');
+      if(!b) return;
+      checkIn(String(b).trim());
+    };
+  }
+}
+function refreshAttendance(){
+  var attSel = $('attSelect');
+  var attList = $('attList');
+  if(!attSel || !attList) return; // Safety check
+  
+  // Show loading state
+  attList.innerHTML='<div class="caption">Loading sessions...</div>';
+  attSel.innerHTML='<option value="">— Loading —</option>';
+  
+  // Load sessions from Google Sheets
+  getSessionsFromSheets().then(function(sessions){
+    // Update sessionsCache
+    sessionsCache = sessions || [];
+    sessionsCache.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)});
+    
+    // Also load registrations to get accurate counts
+    return getRegistrationsFromSheets(true).then(function(registrations){
+      // Count registrations per session
+      var regCounts = {};
+      if(registrations && Array.isArray(registrations)){
+        registrations.forEach(function(reg){
+          var sessionId = reg.sessionId || reg['Session ID'] || reg['sessionId'] || '';
+          if(sessionId){
+            regCounts[sessionId] = (regCounts[sessionId] || 0) + 1;
+          }
+        });
+      }
+      
+  var up=listUpcoming();
+  attSel.innerHTML='<option value="">— select —</option>'+up.map(function(s){return '<option value="'+s.id+'">'+title(s)+'</option>'}).join('\n');
+  attList.innerHTML='';
+      
+      if(up.length === 0){
+        attList.innerHTML='<div class="caption muted">No upcoming sessions</div>';
+        return;
+      }
+      
+  up.forEach(function(s){
+    var row=document.createElement('div');
+    row.className='item';
+        // Use registration count from registrations data, fallback to s.reg length
+        var rc = regCounts[s.id] || (s.reg||[]).length;
+        var ac=(s.att||[]).length;
+    row.innerHTML='<div><div>'+title(s)+'</div><div class="caption muted">Reg '+rc+'/'+s.capacity+' • Checked in '+ac+'</div></div>';
+    var btn=document.createElement('button');
+    btn.textContent='Scan';
+    btn.onclick=function(){openScan(s.id)};
+    row.appendChild(btn);
+    attList.appendChild(row);
+      });
+    });
+  }).catch(function(err){
+    console.error('Error loading attendance data:', err);
+    attList.innerHTML='<div class="caption muted">Error loading sessions. Please try again.</div>';
+    attSel.innerHTML='<option value="">— Error —</option>';
+  });
+}
+function openScan(sid){
+  if(!sid){
+    alert('Please select a session');
+    return;
+  }
+  
+  // Ensure sessions are loaded
+  var s = sessionsCache.find(function(x){return x.id===sid});
+  if(!s){
+    // Try loading sessions first
+    showToast('Loading session data...');
+    getSessionsFromSheets().then(function(sessions){
+      sessionsCache = sessions || [];
+      sessionsCache.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)});
+      s = sessionsCache.find(function(x){return x.id===sid});
+      if(!s){
+        alert('Session not found');
+        return;
+      }
+      scanId=sid;
+      $('scanTitle').textContent=title(s);
+      showTab('scan');
+    }).catch(function(err){
+      console.error('Error loading session:', err);
+      alert('Error loading session data. Please try again.');
+    });
+  } else {
+    scanId=sid;
+    $('scanTitle').textContent=title(s);
+    showTab('scan');
+  }
+}
+function addArrival(msg,type){
+  // Get arrivals element fresh to ensure it exists
+  var arrivalsEl = $('arrivals');
+  if(!arrivalsEl){
+    console.warn('Arrivals element not found');
+    return;
+  }
+  
+  var div=document.createElement('div');
+  div.className='item';
+  if(type==='danger') div.style.borderColor='#E63946'; 
+  if(type==='warn') div.style.borderColor='#F36F21'; 
+  if(type==='ok') div.style.borderColor='#0072CE';
+  div.innerHTML='<div>'+msg+'</div>';
+  arrivalsEl.prepend(div);
+  if(arrivalsEl.children.length>30) arrivalsEl.removeChild(arrivalsEl.lastChild);
+}
+var attCtx={video:$('video'),status:$('attStatus'),stream:null,det:null,scanning:false}
+// Scanner button handlers are now set up in setupScannerButtons() function
+
+// Track ongoing check-ins to prevent duplicates
+var ongoingCheckIns = {};
+
+function checkIn(badge){
+  // Ensure badge is a valid string
+  if(!badge || typeof badge !== 'string'){
+    console.error('Invalid badge:', badge);
+    return;
+  }
+  
+  // Ensure ongoingCheckIns is initialized (check both undefined and null)
+  if(typeof ongoingCheckIns === 'undefined' || ongoingCheckIns === null){
+    ongoingCheckIns = {};
+  }
+  
+  // Prevent multiple simultaneous check-ins for the same badge
+  if(ongoingCheckIns && ongoingCheckIns[badge]){
+    console.log('Check-in already in progress for badge:', badge);
+    return;
+  }
+  
+  // Mark as in progress
+  if(!ongoingCheckIns) ongoingCheckIns = {};
+  ongoingCheckIns[badge] = true;
+  
+  // Clear the flag after a delay (in case of errors)
+  setTimeout(function(){
+    if(ongoingCheckIns && ongoingCheckIns[badge]){
+      delete ongoingCheckIns[badge];
+    }
+  }, 10000);
+  
+  // Clear flag when done (will be set in finally block)
+  var clearFlag = function(){
+    if(ongoingCheckIns && ongoingCheckIns[badge]){
+      delete ongoingCheckIns[badge];
+    }
+  };
+  var s=sessionsCache.find(function(x){return x.id===scanId});
+  if(!s) {
+    addArrival('Session not found','danger');
+    clearFlag();
+    return;
+  }
+  
+  s.att=s.att||[];
+  
+  // Check if already checked in - handle both badge and registrationId
+  var existingAtt = null;
+  for(var i=0;i<s.att.length;i++){
+    var att = s.att[i];
+    if(att.badge === badge || (att.registrationId && att.badgeId === badge)){
+      existingAtt = att;
+      break;
+    }
+  }
+  
+    if(existingAtt){
+    // Check if checking out (already has sessionIn)
+    if(existingAtt.sessionIn && !existingAtt.sessionOut){
+      // Check out - close seat modal if open
+      var seatModal = $('seatModal');
+      if(seatModal && !seatModal.classList.contains('hidden')){
+        seatModal.classList.add('hidden');
+      }
+      
+      // Check out
+      existingAtt.sessionOut = new Date().toISOString();
+      saveSession(s);
+      addArrival(badge+' checked out','ok');
+      showToast('Checked out');
+      // Don't show seat modal on checkout
+      clearFlag();
+      return;
+    } else if(existingAtt.sessionIn && existingAtt.sessionOut){
+      // Already checked in and out - cannot re-check-in
+      var memberName = badge;
+      if(existingAtt.registrationId){
+        // Try to get member name from registration
+        getRegistrationsFromSheets().then(function(regs){
+          var reg = regs.find(function(r){
+            var regId = r.id || r['ID'] || r['id'] || '';
+            return regId === existingAtt.registrationId;
+          });
+          if(reg){
+            memberName = (reg.firstName || '') + ' ' + (reg.lastName || '');
+            memberName = memberName.trim() || badge;
+          }
+          addArrival(memberName + ' already checked out — cannot re-check-in','warn');
+        }).catch(function(){
+          addArrival(badge + ' already checked out — cannot re-check-in','warn');
+        });
+      } else {
+        addArrival(badge + ' already checked out — cannot re-check-in','warn');
+      }
+      showToast('User already checked out - cannot re-check-in');
+      clearFlag();
+      return;
+    } else {
+      // Already checked in (old format)
+      addArrival(badge+' already checked in — Seat '+existingAtt.seat,'warn');
+      showSeat(existingAtt.seat);
+      clearFlag();
+      return;
+    }
+  }
+  
+  // Get validation data and registrations
+  Promise.all([getValidationData(), getRegistrationsFromSheets()]).then(function(results){
+    var validationMembers = results[0] || [];
+    var registrations = results[1] || [];
+    
+    // Check if badge exists in validation sheet
+    var member = validationMembers.find(function(m){
+      var mBadgeId = m.badgeId || m['Badge ID'] || m['badgeId'] || '';
+      return mBadgeId === badge;
+    });
+    
+    // If badge not found, show form to collect info
+    if(!member){
+      return showBadgeRegistrationForm(badge).then(function(formData){
+        if(!formData){
+          addArrival('Registration cancelled','warn');
+          return Promise.reject(new Error('Registration cancelled'));
+        }
+        
+        // Create member data from form
+        member = {
+          badgeId: badge,
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          parentEmail: formData.parentEmail.trim().toLowerCase(),
+          familyRole: '',
+          age: '',
+          house: '',
+          level: '',
+          school: '',
+          parent: ''
+        };
+        
+        // Save to validation sheet (will find existing user by name/email and update with badgeId)
+        addArrival('Saving member to validation sheet...','ok');
+        return updateValidationMember(member).then(function(result){
+          addArrival('Member saved/updated in validation sheet','ok');
+          
+          // Now update all registrations for this user with badgeId
+          return updateAllRegistrationsForUser({
+            firstName: member.firstName,
+            lastName: member.lastName,
+            parentEmail: member.parentEmail,
+            badgeId: badge
+          }).then(function(updateResult){
+            if(updateResult.success && updateResult.updatedCount > 0){
+              addArrival('Updated ' + updateResult.updatedCount + ' registration(s) with badgeId','ok');
+              // Re-fetch registrations to get updated data
+              return getRegistrationsFromSheets().then(function(updatedRegs){
+                return {member: member, registrations: updatedRegs};
+              });
+            } else {
+              return {member: member, registrations: registrations};
+            }
+          }).catch(function(updateErr){
+            console.error('Error updating registrations:', updateErr);
+            addArrival('Member saved but registration update failed. Continuing...','warn');
+            return {member: member, registrations: registrations};
+          });
+        }).catch(function(err){
+          console.error('Error saving member to validation:', err);
+          addArrival('Error saving to validation sheet. Continuing...','warn');
+          // Still continue with the member data even if validation save fails
+          return {member: member, registrations: registrations};
+        });
+      });
+    } else {
+      // Member exists - check if they have a badgeId, if not, update validation and all registrations
+      var memberBadgeId = member.badgeId || member['Badge ID'] || member['badgeId'] || '';
+      if(!memberBadgeId || memberBadgeId !== badge){
+        // Member exists but doesn't have this badgeId - update validation sheet and all registrations
+        member.badgeId = badge;
+        return updateValidationMember(member).then(function(result){
+          addArrival('Updated member badgeId in validation sheet','ok');
+          
+          // Update all registrations for this user with badgeId
+          return updateAllRegistrationsForUser({
+            firstName: member.firstName || member['First Name'] || '',
+            lastName: member.lastName || member['Last Name'] || '',
+            parentEmail: member.parentEmail || member['Parent Email'] || '',
+            badgeId: badge
+          }).then(function(updateResult){
+            if(updateResult.success && updateResult.updatedCount > 0){
+              addArrival('Updated ' + updateResult.updatedCount + ' registration(s) with badgeId','ok');
+              // Re-fetch registrations to get updated data
+              return getRegistrationsFromSheets().then(function(updatedRegs){
+                return {member: member, registrations: updatedRegs};
+              });
+            } else {
+              return {member: member, registrations: registrations};
+            }
+          }).catch(function(updateErr){
+            console.error('Error updating registrations:', updateErr);
+            addArrival('Member updated but registration update failed. Continuing...','warn');
+            return {member: member, registrations: registrations};
+          });
+        }).catch(function(err){
+          console.error('Error updating member:', err);
+          addArrival('Error updating member. Continuing...','warn');
+          return {member: member, registrations: registrations};
+        });
+      } else {
+        // Member exists and already has this badgeId, return data for next step
+        return {member: member, registrations: registrations};
+      }
+    }
+  }).then(function(data){
+    var member = data.member;
+    var registrations = data.registrations;
+    
+    // Find registration for this session - check by badgeId first
+    var registration = registrations.find(function(reg){
+      var regBadgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
+      var regSessionId = reg.sessionId || reg['Session ID'] || reg['sessionId'] || '';
+      return regBadgeId === badge && regSessionId === scanId;
+    });
+    
+    // If not found by badgeId, check for existing registration without badgeId (by name and email)
+    if(!registration && member){
+      registration = registrations.find(function(reg){
+        var regSessionId = reg.sessionId || reg['Session ID'] || reg['sessionId'] || '';
+        var regBadgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
+        var regFirstName = (reg.firstName || reg['First Name'] || '').toLowerCase().trim();
+        var regLastName = (reg.lastName || reg['Last Name'] || '').toLowerCase().trim();
+        var regParentEmail = (reg.parentEmail || reg['Parent Email'] || '').toLowerCase().trim();
+        var memberFirstName = (member.firstName || member['First Name'] || '').toLowerCase().trim();
+        var memberLastName = (member.lastName || member['Last Name'] || '').toLowerCase().trim();
+        var memberParentEmail = (member.parentEmail || member['Parent Email'] || '').toLowerCase().trim();
+        
+        return regSessionId === scanId && 
+               !regBadgeId && 
+               regFirstName === memberFirstName && 
+               regLastName === memberLastName && 
+               regParentEmail === memberParentEmail;
+      });
+      
+      // If found existing registration without badgeId, update it AND all other registrations for this user
+      if(registration){
+        var registrationId = registration.id || registration['ID'] || registration['id'] || '';
+        if(registrationId){
+          // Update ALL registrations for this user with badgeId (not just this one)
+          var memberFirstName = (member.firstName || member['First Name'] || '').trim();
+          var memberLastName = (member.lastName || member['Last Name'] || '').trim();
+          var memberParentEmail = (member.parentEmail || member['Parent Email'] || '').trim().toLowerCase();
+          
+          return updateAllRegistrationsForUser({
+            firstName: memberFirstName,
+            lastName: memberLastName,
+            parentEmail: memberParentEmail,
+            badgeId: badge
+          }).then(function(updateResult){
+            if(updateResult.success && updateResult.updatedCount > 0){
+              addArrival('Updated ' + updateResult.updatedCount + ' registration(s) with badgeId','ok');
+            }
+            // Re-fetch registrations to get updated registration
+            return getRegistrationsFromSheets().then(function(updatedRegs){
+              registration = updatedRegs.find(function(reg){
+                var regId = reg.id || reg['ID'] || reg['id'] || '';
+                return regId === registrationId;
+              });
+              return processCheckIn(s, badge, registration, member);
+            });
+          }).catch(function(err){
+            console.error('Error updating registrations:', err);
+            addArrival('Error updating registrations. Please try again.','danger');
+          });
+        }
+      }
+    }
+    
+    // If not registered for this session, register them
+    if(!registration){
+      if(!member){
+        addArrival('Member not found. Please register first.','danger');
+        return;
+      }
+      
+      // Register for this session
+      var registrationData = {
+        badgeId: badge,
+        firstName: member.firstName || member['First Name'] || '',
+        lastName: member.lastName || member['Last Name'] || '',
+        familyRole: member.familyRole || member['Family Role'] || '',
+        age: member.age || member['Age'] || '',
+        house: member.house || member['House'] || '',
+        level: member.level || member['Level'] || '',
+        school: member.school || member['School'] || '',
+        parent: member.parent || member['Parent'] || '',
+        parentEmail: member.parentEmail || member['Parent Email'] || member['parentEmail'] || '',
+        sessionId: scanId,
+        sessionDate: new Date(s.dt).toISOString().slice(0,10),
+        sessionTime: new Date(s.dt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+        sessionTopic: s.topic || '',
+        registeredBy: 'Attendance Check-in',
+        registeredDateAndTime: new Date().toISOString()
+      };
+      
+      // Save registration
+      return saveRegistrationToSheets(registrationData).then(function(response){
+        var registrationId = response.id || registrationData.id;
+        if(registrationId){
+          // Update session with registration ID
+          return updateSessionAfterRegistration(scanId, registrationId).then(function(){
+            // Re-fetch registrations to get the new registration
+            return getRegistrationsFromSheets().then(function(updatedRegs){
+              registration = updatedRegs.find(function(reg){
+                var regId = reg.id || reg['ID'] || reg['id'] || '';
+                return regId === registrationId;
+              });
+              return processCheckIn(s, badge, registration, member);
+            });
+          });
+        } else {
+          return processCheckIn(s, badge, registrationData, member);
+        }
+      }).catch(function(err){
+        console.error('Error registering:', err);
+        addArrival('Error registering. Please try again.','danger');
+      });
+    } else {
+      // Already registered, proceed with check-in
+      return processCheckIn(s, badge, registration, member);
+    }
+  }).catch(function(err){
+    console.error('Error checking in:', err);
+    addArrival('Error checking in. Please try again.','danger');
+  }).finally(function(){
+    // Always clear the flag
+    clearFlag();
+  });
+}
+
+// Track if form modal is currently showing
+var badgeFormModalShowing = false;
+
+// Show badge registration form modal
+function showBadgeRegistrationForm(badge){
+  return new Promise(function(resolve){
+    // If form is already showing, don't create another one
+    if(badgeFormModalShowing){
+      console.log('Badge registration form already showing');
+      return;
+    }
+    
+    badgeFormModalShowing = true;
+    
+    // Stop camera when form opens
+    // Ensure attCtx is initialized
+    if(!attCtx || !attCtx.video){
+      attCtx = {video:$('video'),status:$('attStatus'),stream:null,det:null,scanning:false};
+    }
+    
+    // Stop camera if it's scanning
+    if(attCtx && attCtx.scanning){
+      stopCam(attCtx);
+      if(attCtx.status){
+        attCtx.status.textContent = 'Status: paused for registration';
+      }
+    }
+    
+    // Remove any existing modal first (but not our form modal)
+    var existingModals = document.querySelectorAll('.modal');
+    existingModals.forEach(function(existingModal){
+      // Only remove if it's not our form modal (check by content)
+      var hasFormContent = existingModal.querySelector('input[type="text"]');
+      if(!hasFormContent && existingModal.parentNode){
+        document.body.removeChild(existingModal);
+      }
+    });
+    
+    // Create modal
+    var modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'flex';
+    
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.style.maxWidth = '500px';
+    card.style.width = '90%';
+    
+    var title = document.createElement('h2');
+    title.textContent = 'First Time User - Register Badge';
+    card.appendChild(title);
+    
+    var subtitle = document.createElement('div');
+    subtitle.className = 'caption';
+    subtitle.textContent = 'Badge ID: ' + badge;
+    subtitle.style.marginBottom = '16px';
+    card.appendChild(subtitle);
+    
+    var form = document.createElement('div');
+    form.style.display = 'flex';
+    form.style.flexDirection = 'column';
+    form.style.gap = '12px';
+    
+    // First Name
+    var firstNameLabel = document.createElement('label');
+    firstNameLabel.textContent = 'First Name *';
+    firstNameLabel.style.display = 'flex';
+    firstNameLabel.style.flexDirection = 'column';
+    firstNameLabel.style.gap = '4px';
+    var firstNameInput = document.createElement('input');
+    firstNameInput.type = 'text';
+    firstNameInput.required = true;
+    firstNameInput.style.padding = '8px';
+    firstNameInput.style.borderRadius = '8px';
+    firstNameInput.style.border = '1px solid var(--border)';
+    firstNameLabel.appendChild(firstNameInput);
+    form.appendChild(firstNameLabel);
+    
+    // Last Name
+    var lastNameLabel = document.createElement('label');
+    lastNameLabel.textContent = 'Last Name *';
+    lastNameLabel.style.display = 'flex';
+    lastNameLabel.style.flexDirection = 'column';
+    lastNameLabel.style.gap = '4px';
+    var lastNameInput = document.createElement('input');
+    lastNameInput.type = 'text';
+    lastNameInput.required = true;
+    lastNameInput.style.padding = '8px';
+    lastNameInput.style.borderRadius = '8px';
+    lastNameInput.style.border = '1px solid var(--border)';
+    lastNameLabel.appendChild(lastNameInput);
+    form.appendChild(lastNameLabel);
+    
+    // Parent Email
+    var emailLabel = document.createElement('label');
+    emailLabel.textContent = 'Parent Email *';
+    emailLabel.style.display = 'flex';
+    emailLabel.style.flexDirection = 'column';
+    emailLabel.style.gap = '4px';
+    var emailInput = document.createElement('input');
+    emailInput.type = 'email';
+    emailInput.required = true;
+    emailInput.style.padding = '8px';
+    emailInput.style.borderRadius = '8px';
+    emailInput.style.border = '1px solid var(--border)';
+    emailLabel.appendChild(emailInput);
+    form.appendChild(emailLabel);
+    
+    card.appendChild(form);
+    
+    var btnRow = document.createElement('div');
+    btnRow.className = 'row';
+    btnRow.style.marginTop = '16px';
+    btnRow.style.justifyContent = 'flex-end';
+    btnRow.style.gap = '8px';
+    
+    var cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(modalResolved) return;
+      modalResolved = true;
+      badgeFormModalShowing = false;
+      if(modal && modal.parentNode){
+        document.body.removeChild(modal);
+      }
+      resolve(null);
+    };
+    
+    var saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Register';
+    saveBtn.className = 'primary';
+    var isSubmitting = false;
+    var modalResolved = false;
+    
+    saveBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if(isSubmitting || modalResolved) return; // Prevent double submission
+      isSubmitting = true;
+      
+      var firstName = firstNameInput.value.trim();
+      var lastName = lastNameInput.value.trim();
+      var parentEmail = emailInput.value.trim().toLowerCase();
+      
+      if(!firstName || !lastName || !parentEmail){
+        alert('Please fill in all required fields');
+        isSubmitting = false;
+        return;
+      }
+      
+      if(!parentEmail.includes('@')){
+        alert('Please enter a valid email address');
+        isSubmitting = false;
+        return;
+      }
+      
+      // Mark as resolved and remove modal before resolving to prevent rerendering
+      modalResolved = true;
+      badgeFormModalShowing = false;
+      if(modal && modal.parentNode){
+        document.body.removeChild(modal);
+      }
+      
+      // Resolve with data
+      resolve({
+        firstName: firstName,
+        lastName: lastName,
+        parentEmail: parentEmail
+      });
+    };
+    
+    btnRow.appendChild(cancelBtn);
+    btnRow.appendChild(saveBtn);
+    card.appendChild(btnRow);
+    
+    modal.appendChild(card);
+    document.body.appendChild(modal);
+    
+    // Close on background click
+    modal.addEventListener('click', function(e){
+      if(e.target === modal && !modalResolved){
+        modalResolved = true;
+        badgeFormModalShowing = false;
+        if(modal && modal.parentNode){
+          document.body.removeChild(modal);
+        }
+        resolve(null);
+      }
+    });
+    
+    // Prevent input events from triggering anything
+    firstNameInput.addEventListener('input', function(e){
+      e.stopPropagation();
+    });
+    lastNameInput.addEventListener('input', function(e){
+      e.stopPropagation();
+    });
+    emailInput.addEventListener('input', function(e){
+      e.stopPropagation();
+    });
+    
+    // Focus on first input
+    setTimeout(function(){
+      if(!modalResolved && firstNameInput){
+        firstNameInput.focus();
+      }
+    }, 100);
+    
+    // Handle Enter key
+    firstNameInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && !modalResolved){
+        e.preventDefault();
+        lastNameInput.focus();
+      }
+    });
+    lastNameInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && !modalResolved){
+        e.preventDefault();
+        emailInput.focus();
+      }
+    });
+    emailInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && !modalResolved){
+        e.preventDefault();
+        saveBtn.click();
+      }
+    });
+  });
+}
+
+// Update registration badgeId
+function updateRegistrationBadgeId(registrationId, badgeId){
+  return new Promise(function(resolve, reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      reject(new Error('Google Sheets not configured'));
+      return;
+    }
+    
+    var url = GOOGLE_SHEETS.API_URL + '?action=updateRegistration';
+    var payload = JSON.stringify({
+      id: registrationId,
+      badgeId: badgeId
+    });
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: payload
+    })
+      .then(function(r){
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.text().then(function(text){
+          try {
+            return JSON.parse(text);
+          } catch(e) {
+            return {success: true, message: text};
+          }
+        });
+      })
+      .then(function(data){
+        if(data.success){
+          resolve(data);
+        } else {
+          reject(new Error(data.error || 'Failed to update registration'));
+        }
+      })
+      .catch(function(err){
+        console.error('updateRegistrationBadgeId: Error', err);
+        reject(err);
+      });
+  });
+}
+
+// Update all registrations for a user with badgeId
+function updateAllRegistrationsForUser(userData){
+  return new Promise(function(resolve, reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      reject(new Error('Google Sheets not configured'));
+      return;
+    }
+    
+    var url = GOOGLE_SHEETS.API_URL + '?action=updateAllRegistrationsForUser';
+    var payload = JSON.stringify(userData);
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: payload
+    })
+      .then(function(r){
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.text().then(function(text){
+          try {
+            return JSON.parse(text);
+          } catch(e) {
+            return {success: true, message: text};
+          }
+        });
+      })
+      .then(function(data){
+        if(data.success){
+          resolve(data);
+        } else {
+          reject(new Error(data.error || 'Failed to update registrations'));
+        }
+      })
+      .catch(function(err){
+        console.error('updateAllRegistrationsForUser: Error', err);
+        reject(err);
+      });
+  });
+}
+
+// Helper function to process check-in
+function processCheckIn(session, badge, registration, member){
+  // Get registration ID
+  var registrationId = registration.id || registration['ID'] || registration['id'] || '';
+  
+  // Assign seat
+  var used={};
+  for(var j=0;j<session.att.length;j++){
+    var att = session.att[j];
+    if(att.seat) used[att.seat]=true;
+  }
+  var seat=null;
+  for(var k=0;k<WORKSTATIONS.length;k++){
+    var n=WORKSTATIONS[k];
+    if(!used[n]){
+      seat=n;
+      break;
+    }
+  }
+  if(seat===null){
+    addArrival('No more seats available','danger');
+    showToast('No more seats available');
+    return;
+  }
+  
+  // Check in with registrationId and session in time
+  var checkInData = {
+    badge: badge,
+    badgeId: badge,
+    registrationId: registrationId,
+    seat: seat,
+    sessionIn: new Date().toISOString(),
+    ts: Date.now()
+  };
+  
+  session.att.push(checkInData);
+  saveSession(session);
+  
+  var memberName = '';
+  if(member){
+    memberName = (member.firstName || '') + ' ' + (member.lastName || '');
+    memberName = memberName.trim() || badge;
+  } else {
+    memberName = badge;
+  }
+  
+  addArrival(memberName + ' ✓ checked in — Seat '+seat,'ok');
+  showToast('Checked in successfully — Seat '+seat);
+  
+  // Show seat modal - ensure scan page is active
+  if(isScanPageActive()){
+    showSeat(seat);
+  } else {
+    // If scan page not active, at least show in toast
+    console.log('Seat assigned:', seat);
+  }
+}
+
+/* === PATCH: Cross‑platform camera + barcode detection (v3, with JS fallback) === */
+function isLocalhost(){return /^(localhost|127\.0\.0\.1|\[::1\])$/i.test(location.hostname)}
+
+// Ensure a JS decoder (jsQR) is available. Order: already loaded -> cached -> CDN -> pick local file
+function ensureJSQR(){
+  if(window.jsQR) return Promise.resolve('ok');
+  var KEY='__steamoji_jsqr_code_v1';
+  try{
+    var cached=localStorage.getItem(KEY);
+    if(cached){ (0,eval)(cached); if(window.jsQR) return Promise.resolve('cached'); }
+  }catch(e){}
+  function fetchAndCache(url){
+    return fetch(url, {mode:'cors'}).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); }).then(function(code){
+      (0,eval)(code);
+      if(window.jsQR){ try{ localStorage.setItem(KEY, code); }catch(e){} return 'fetched'; }
+      throw new Error('Decoder not present after eval');
+    });
+  }
+  function pickLocalFile(){
+    return new Promise(function(resolve,reject){
+      var inp=document.createElement('input'); inp.type='file'; inp.accept='.js,application/javascript,text/javascript'; inp.style.display='none';
+      document.body.appendChild(inp);
+      inp.onchange=function(){ var f=inp.files[0]; if(!f){ document.body.removeChild(inp); return reject(new Error('No file')); }
+        var r=new FileReader(); r.onload=function(){ try{ var code=String(r.result||''); (0,eval)(code); if(window.jsQR){ try{ localStorage.setItem(KEY, code); }catch(e){} resolve('local'); } else { reject(new Error('Invalid decoder file')); } } catch(e){ reject(e); } finally { document.body.removeChild(inp); } };
+        r.onerror=function(){ document.body.removeChild(inp); reject(new Error('Read failed')); };
+        r.readAsText(f);
+      };
+      inp.click();
+    });
+  }
+  var cdns=[
+    'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js',
+    'https://unpkg.com/jsqr@1.4.0/dist/jsQR.js'
+  ];
+  var p=Promise.reject();
+  cdns.forEach(function(u){ p=p.catch(function(){ return fetchAndCache(u); }); });
+  return p.catch(function(){ return pickLocalFile(); });
+}
+
+function startCam(ctx,mode){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){alert('Camera not available');return}
+  var isMobile=/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  var constraints={video:{},audio:false};
+  if(isMobile){ constraints.video.facingMode={ideal:'environment'}; }
+  else { constraints.video.width={ideal:1280}; constraints.video.height={ideal:720}; }
+
+  navigator.mediaDevices.getUserMedia(constraints).then(function(stream){
+    if(!ctx.video){
+      alert('Video element not found');
+      return;
+    }
+    
+    ctx.video.srcObject=stream;
+    ctx.stream=stream; 
+    ctx.track=stream.getVideoTracks&&stream.getVideoTracks()[0];
+    ctx.ic=(window.ImageCapture&&ctx.track)?new ImageCapture(ctx.track):null;
+    
+    // Wait for video to be ready before starting scanning
+    ctx.video.onloadedmetadata = function(){
+      var p=ctx.video.play(); 
+      if(p&&typeof p.then==='function'){ 
+        p.then(function(){
+          ctx.scanning=true;
+    if(ctx.status) ctx.status.textContent='Status: camera on';
+
+    var canUseNative=('BarcodeDetector' in window) && (isSecureContext || isLocalhost());
+    if(canUseNative){
+            try{ 
+              ctx.det=new BarcodeDetector({formats:['qr_code']}); 
+              if(ctx.status) ctx.status.textContent='Status: native decoder'; 
+              detectLoop(ctx,mode); 
+              return; 
+            } catch(e){ 
+              console.error('BarcodeDetector error:', e);
+              // Fall through to JS fallback
+            }
+    }
+    if(ctx.status){ ctx.status.textContent='Status: loading JS decoder…'; }
+          ensureJSQR().then(function(){ 
+            if(ctx.status) ctx.status.textContent='Status: JS decoder active'; 
+            jsDetectLoop(ctx,mode); 
+          }).catch(function(err){ 
+            console.error('jsQR load error:', err); 
+            alert('Could not load QR decoder. You can still use Manual badge.'); 
+          });
+        }).catch(function(err){
+          console.error('Video play error:', err);
+          alert('Could not start video playback');
+        });
+      } else {
+        ctx.scanning=true;
+        if(ctx.status) ctx.status.textContent='Status: camera on';
+        
+        var canUseNative=('BarcodeDetector' in window) && (isSecureContext || isLocalhost());
+        if(canUseNative){
+          try{ 
+            ctx.det=new BarcodeDetector({formats:['qr_code']}); 
+            if(ctx.status) ctx.status.textContent='Status: native decoder'; 
+            detectLoop(ctx,mode); 
+            return; 
+          } catch(e){ 
+            console.error('BarcodeDetector error:', e);
+          }
+        }
+        if(ctx.status){ ctx.status.textContent='Status: loading JS decoder…'; }
+        ensureJSQR().then(function(){ 
+          if(ctx.status) ctx.status.textContent='Status: JS decoder active'; 
+          jsDetectLoop(ctx,mode); 
+        }).catch(function(err){ 
+          console.error('jsQR load error:', err); 
+          alert('Could not load QR decoder. You can still use Manual badge.'); 
+        });
+      }
+    };
+    
+    // Fallback if onloadedmetadata doesn't fire
+    setTimeout(function(){
+      if(!ctx.scanning && ctx.video.readyState >= 2){
+        ctx.scanning=true;
+        if(ctx.status) ctx.status.textContent='Status: camera on';
+        
+        var canUseNative=('BarcodeDetector' in window) && (isSecureContext || isLocalhost());
+        if(canUseNative){
+          try{ 
+            ctx.det=new BarcodeDetector({formats:['qr_code']}); 
+            if(ctx.status) ctx.status.textContent='Status: native decoder'; 
+            detectLoop(ctx,mode); 
+            return; 
+          } catch(e){ 
+            console.error('BarcodeDetector error:', e);
+          }
+        }
+        if(ctx.status){ ctx.status.textContent='Status: loading JS decoder…'; }
+        ensureJSQR().then(function(){ 
+          if(ctx.status) ctx.status.textContent='Status: JS decoder active'; 
+          jsDetectLoop(ctx,mode); 
+        }).catch(function(err){ 
+          console.error('jsQR load error:', err); 
+          alert('Could not load QR decoder. You can still use Manual badge.'); 
+        });
+      }
+    }, 1000);
+  }).catch(function(err){ 
+    console.error('getUserMedia error:', err); 
+    alert('Camera blocked or unavailable. Allow access or use Manual badge'); 
+  })
+}
+
+function stopCam(ctx){ 
+  if(!ctx) return; // Safety check
+  ctx.scanning=false; 
+  if(ctx.stream){ 
+    try{ 
+      ctx.stream.getTracks().forEach(function(t){t.stop()}) 
+    }catch(e){} 
+    ctx.stream=null 
+  } 
+  if(ctx.status) ctx.status.textContent='Status: idle' 
+}
+
+function detectLoop(ctx,mode){
+  if(!ctx.scanning||!ctx.det) return;
+  var lastWarningTime = 0;
+  var warningCooldown = 2000; // Show warning max once per 2 seconds
+  
+  function handleCodes(codes){
+    if(codes&&codes.length){ 
+      var code = codes[0];
+      var raw=String(code.rawValue||'').trim(); 
+      
+      // Check distance using bounding box (if available)
+      if(code.boundingBox){
+        var box = code.boundingBox;
+        var width = Math.abs(box.x || (box.right - box.left) || 0);
+        var height = Math.abs(box.y || (box.bottom - box.top) || 0);
+        var size = Math.max(width, height);
+        var videoWidth = ctx.video.videoWidth || ctx.video.clientWidth || 640;
+        var relativeSize = (size / videoWidth) * 100;
+        
+        var now = Date.now();
+        if(relativeSize < 5 && (now - lastWarningTime) > warningCooldown){
+          // Too far - QR code is too small
+          if(ctx.status) ctx.status.textContent='Status: Move closer to QR code';
+          lastWarningTime = now;
+          if(ctx.scanning) requestAnimationFrame(run);
+          return;
+        } else if(relativeSize > 80 && (now - lastWarningTime) > warningCooldown){
+          // Too close - QR code is too large
+          if(ctx.status) ctx.status.textContent='Status: Move farther from QR code';
+          lastWarningTime = now;
+          if(ctx.scanning) requestAnimationFrame(run);
+          return;
+        }
+      }
+      
+      // Valid QR code detected
+      ctx.scanning=false; 
+      if(ctx.status) ctx.status.textContent='Status: QR code detected - waiting 5 seconds...';
+      setTimeout(function(){
+        ctx.scanning=true;
+        if(ctx.status) ctx.status.textContent='Status: native decoder';
+        requestAnimationFrame(run);
+      },5000); // 5 second wait to prevent immediate re-scanning 
+      if(mode==='reg') onBadgeReg(raw); 
+      else if(mode==='att') checkIn(raw); 
+    } else { 
+      if(ctx.scanning) requestAnimationFrame(run); 
+    }
+  }
+  function run(){ 
+    if(!ctx.scanning || !ctx.det) return; 
+    if(!ctx.video || ctx.video.readyState < 2){
+      // Video not ready yet
+      if(ctx.scanning) requestAnimationFrame(run);
+      return;
+    }
+    
+    if(ctx.ic && ctx.ic.grabFrame){ 
+      ctx.ic.grabFrame().then(function(bitmap){ 
+        return ctx.det.detect(bitmap).then(function(codes){ 
+          if(bitmap.close) bitmap.close(); 
+          handleCodes(codes); 
+        }); 
+      }).catch(function(err){ 
+        console.error('detectLoop grabFrame error:', err);
+        if(ctx.scanning) requestAnimationFrame(run); 
+      }); 
+      return; 
+    }
+    if('createImageBitmap' in window){ 
+      createImageBitmap(ctx.video).then(function(bmp){ 
+        return ctx.det.detect(bmp).then(function(codes){ 
+          if(bmp.close) bmp.close(); 
+          handleCodes(codes); 
+        }); 
+      }).catch(function(err){ 
+        console.error('detectLoop createImageBitmap error:', err);
+        if(ctx.scanning) requestAnimationFrame(run); 
+      }); 
+      return; 
+    }
+    ctx.det.detect(ctx.video).then(handleCodes).catch(function(err){ 
+      console.error('detectLoop detect error:', err);
+      if(ctx.scanning) requestAnimationFrame(run); 
+    }); 
+  }
+  requestAnimationFrame(run);
+}
+
+// JS decoder loop using jsQR (works on file:// & non-HTTPS)
+function jsDetectLoop(ctx,mode){
+  if(!ctx.scanning) return;
+  var last=0, interval=120; // throttle ~8 fps
+  var lastWarningTime = 0;
+  var warningCooldown = 2000; // Show warning max once per 2 seconds
+  var canvas=ctx.canvas; var g=ctx.ctx2d;
+  
+  function ensureCanvas(){
+    if(canvas&&g) return;
+    canvas=document.createElement('canvas'); canvas.id='qrCanvas'; canvas.style.display='none';
+    document.body.appendChild(canvas); g=canvas.getContext('2d'); ctx.canvas=canvas; ctx.ctx2d=g;
+  }
+  
+  function run(ts){ 
+    if(!ctx.scanning) return; 
+    if(!ctx.video || ctx.video.readyState < 2 || !ctx.video.videoWidth){ 
+      // Video not ready yet
+      return requestAnimationFrame(run); 
+    }
+    if(ts-last<interval){ return requestAnimationFrame(run); }
+    last=ts; 
+    ensureCanvas();
+    var vw=ctx.video.videoWidth, vh=ctx.video.videoHeight;
+    if(!vw || !vh){
+      return requestAnimationFrame(run);
+    }
+    var scale=vw>0? Math.min(800/vw,1):1; // downscale large frames for speed
+    var w=Math.max(240, (vw*scale)|0), h=Math.max(240, (vh*scale)|0);
+    if(canvas.width!==w||canvas.height!==h){ canvas.width=w; canvas.height=h; }
+    try{ 
+      g.drawImage(ctx.video,0,0,w,h); 
+      var img=g.getImageData(0,0,w,h); 
+      var res=window.jsQR(img.data, w, h, { inversionAttempts:'attemptBoth' }); 
+      
+      if(res && res.data){ 
+        // Check distance using QR code location data
+        if(res.location){
+          var loc = res.location;
+          // Calculate QR code size from corner points
+          var topLeft = loc.topLeftCornerPoint;
+          var topRight = loc.topRightCornerPoint;
+          var bottomLeft = loc.bottomLeftCornerPoint;
+          var bottomRight = loc.bottomRightCornerPoint;
+          
+          if(topLeft && topRight && bottomLeft && bottomRight){
+            var width = Math.sqrt(
+              Math.pow(topRight.x - topLeft.x, 2) + 
+              Math.pow(topRight.y - topLeft.y, 2)
+            );
+            var height = Math.sqrt(
+              Math.pow(bottomLeft.y - topLeft.y, 2) + 
+              Math.pow(bottomLeft.x - topLeft.x, 2)
+            );
+            var size = Math.max(width, height);
+            var relativeSize = (size / w) * 100;
+            
+            var now = Date.now();
+            if(relativeSize < 8 && (now - lastWarningTime) > warningCooldown){
+              // Too far - QR code is too small
+              if(ctx.status) ctx.status.textContent='Status: Move closer to QR code';
+              lastWarningTime = now;
+              requestAnimationFrame(run);
+              return;
+            } else if(relativeSize > 70 && (now - lastWarningTime) > warningCooldown){
+              // Too close - QR code is too large
+              if(ctx.status) ctx.status.textContent='Status: Move farther from QR code';
+              lastWarningTime = now;
+              requestAnimationFrame(run);
+              return;
+            }
+          }
+        }
+        
+        // Valid QR code detected
+        var raw=String(res.data||'').trim(); 
+        if(!raw || raw.length === 0){
+          // Empty QR code data, continue scanning
+          requestAnimationFrame(run);
+          return;
+        }
+        
+        ctx.scanning=false; 
+        if(ctx.status) ctx.status.textContent='Status: QR code detected - waiting 5 seconds...';
+        setTimeout(function(){
+          ctx.scanning=true; 
+          if(ctx.status) ctx.status.textContent='Status: JS decoder active';
+          requestAnimationFrame(run);
+        },5000); // 5 second wait to prevent immediate re-scanning 
+        if(mode==='reg') onBadgeReg(raw); 
+        else if(mode==='att') checkIn(raw); 
+      } else {
+        // No QR code found - reset status if it was showing a warning
+        if(ctx.status && ctx.status.textContent.includes('Move')){
+          var now = Date.now();
+          if((now - lastWarningTime) > warningCooldown * 2){
+            ctx.status.textContent='Status: JS decoder active';
+          }
+        }
+        requestAnimationFrame(run); 
+      }
+    } catch(e){ 
+      console.error('jsDetectLoop error:', e);
+      requestAnimationFrame(run); 
+    }
+  }
+  requestAnimationFrame(run);
+}
+/* === END PATCH === */
+
+function refreshAdmin(){
+  // Load sessions from Google Sheets first
+  loadSessionsFromSheets().then(function(){
+    refreshAdminList(true);
+  });
+}
+
+function loadSessionsFromSheets(){
+  return new Promise(function(resolve,reject){
+    getSessionsFromSheets().then(function(sheetSessions){
+      if(sheetSessions && sheetSessions.length > 0){
+        // Store sessions in memory (not local storage)
+        sessionsCache = sheetSessions.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)});
+      } else {
+        sessionsCache = [];
+      }
+      resolve();
+    }).catch(function(err){
+      console.error('Error loading sessions from Google Sheets:', err);
+      // Continue with empty sessions if error
+      sessionsCache = [];
+      resolve();
+    });
+  });
+}
+function getUsersArray(){
+  // This will be called with registrations from Google Sheets
+  // For now return empty, will be populated by renderUserMgmt
+  return [];
+}
+function getUsersArrayFromSheets(registrations){
+  var membersMap = getMembersFromRegistrations(registrations || []);
+  var out = [];
+  Object.keys(membersMap).forEach(function(regId){
+    var member = membersMap[regId];
+    out.push({
+      badge: member.badge || regId, // Use badge if available, otherwise use regId
+      first: member.first || '',
+      last: member.last || '',
+      name: member.name || '(no name)',
+      phone: member.phone || '',
+      email: member.email || '',
+      regId: regId // Include registration ID
+    });
+  });
+  out.sort(function(a,b){return (a.name||'').localeCompare(b.name||'')});
+  return out;
+}
+// deleteUserMember function removed (User Management removed)
+// User Management function removed
+
+function editValidationMember(member, rowIndex, callback){
+  // Create edit modal
+  var modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.style.display = 'flex';
+  
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.style.maxWidth = '500px';
+  card.style.width = '90%';
+  
+  var title = document.createElement('h2');
+  title.textContent = 'Edit Member';
+  card.appendChild(title);
+  
+  var form = document.createElement('div');
+  form.style.display = 'flex';
+  form.style.flexDirection = 'column';
+  form.style.gap = '12px';
+  
+  // Create input fields for all member properties
+  var fields = [
+    {key: 'badgeId', label: 'Badge ID', value: member.badgeId || member['Badge ID'] || member['badgeId'] || ''},
+    {key: 'firstName', label: 'First Name', value: member.firstName || member['First Name'] || member['firstName'] || ''},
+    {key: 'lastName', label: 'Last Name', value: member.lastName || member['Last Name'] || member['lastName'] || ''},
+    {key: 'familyRole', label: 'Family Role', value: member.familyRole || member['Family Role'] || ''},
+    {key: 'age', label: 'Age', value: member.age || member['Age'] || '', type: 'number'},
+    {key: 'house', label: 'House', value: member.house || member['House'] || ''},
+    {key: 'level', label: 'Level', value: member.level || member['Level'] || ''},
+    {key: 'school', label: 'School', value: member.school || member['School'] || ''},
+    {key: 'parent', label: 'Parent', value: member.parent || member['Parent'] || ''},
+    {key: 'parentEmail', label: 'Parent Email', value: member.parentEmail || member['Parent Email'] || member['parentEmail'] || member.email || '', type: 'email'}
+  ];
+  
+  var inputs = {};
+  fields.forEach(function(field){
+    var label = document.createElement('label');
+    label.textContent = field.label;
+    label.style.display = 'flex';
+    label.style.flexDirection = 'column';
+    label.style.gap = '4px';
+    
+    var input = document.createElement('input');
+    input.type = field.type || 'text';
+    input.value = field.value;
+    input.style.padding = '8px';
+    input.style.borderRadius = '8px';
+    input.style.border = '1px solid var(--border)';
+    inputs[field.key] = input;
+    
+    label.appendChild(input);
+    form.appendChild(label);
+  });
+  
+  card.appendChild(form);
+  
+  var btnRow = document.createElement('div');
+  btnRow.className = 'row';
+  btnRow.style.marginTop = '16px';
+  btnRow.style.justifyContent = 'flex-end';
+  btnRow.style.gap = '8px';
+  
+  var cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = function(){
+    document.body.removeChild(modal);
+  };
+  
+  var saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save';
+  saveBtn.className = 'primary';
+  saveBtn.onclick = function(){
+    var updatedData = {
+      _rowIndex: rowIndex
+    };
+    fields.forEach(function(field){
+      updatedData[field.key] = inputs[field.key].value.trim();
+    });
+    
+    updateValidationMember(updatedData).then(function(){
+      showToast('Member updated');
+      document.body.removeChild(modal);
+      if(callback) callback();
+    }).catch(function(err){
+      console.error('Error updating member:', err);
+      alert('Error updating member: ' + (err.message || 'Unknown error'));
+    });
+  };
+  
+  btnRow.appendChild(cancelBtn);
+  btnRow.appendChild(saveBtn);
+  card.appendChild(btnRow);
+  
+  modal.appendChild(card);
+  document.body.appendChild(modal);
+  
+  // Close on background click
+  modal.addEventListener('click', function(e){
+    if(e.target === modal){
+      document.body.removeChild(modal);
+    }
+  });
+}
+// User Management removed
+var manQ=$('manFindQ'), manBtn=$('manFindBtn'), manList=$('manFindList');
+if(manBtn&&manQ&&manList){
+  var doManFind=function(){
+    var q=(manQ.value||'').toLowerCase().trim();
+    manList.innerHTML='';
+    if(!q){ manList.innerHTML='<div class="muted">Enter a search.</div>'; return; }
+    var hits=[]; var mems=DB.members();
+    for(var b in mems){ if(Object.prototype.hasOwnProperty.call(mems,b)){
+      var m=DB.getM(b)||{}; var name=([m.first||'',m.last||''].join(' ').trim()).toLowerCase();
+      if(b.toLowerCase().indexOf(q)>-1 || name.indexOf(q)>-1 || (m.phone||'').toLowerCase().indexOf(q)>-1 || (m.email||'').toLowerCase().indexOf(q)>-1){
+        hits.push({badge:b,first:m.first||'',last:m.last||'',phone:m.phone||'',email:m.email||''});
+      }
+    }}
+    if(!hits.length){ manList.innerHTML='<div class="muted">No matches.</div>'; return; }
+    hits.sort(function(a,b){return ((a.first+' '+a.last).trim()).localeCompare((b.first+' '+b.last).trim())});
+    hits.slice(0,50).forEach(function(r){
+      var row=document.createElement('div'); row.className='item';
+      var nm=(r.first+' '+r.last).trim()||'(no name)';
+      row.innerHTML='<div><div>'+nm+'</div><div class="caption muted"><span class="pill">'+r.badge+'</span>'+(r.phone?(' • '+r.phone):'')+(r.email?(' • '+r.email):'')+'</div></div>';
+      var use=document.createElement('button'); use.textContent='Use';
+      use.onclick=function(){
+        $('manBadge').value=r.badge; $('manFirst').value=r.first; $('manLast').value=r.last; $('manPhone').value=r.phone; $('manEmail').value=r.email;
+        manList.innerHTML=''; var mc=$('manChoice'); if(mc){ mc.dataset.sid=''; mc.textContent=''; }
+        var me=$('manEligible'); if(me) me.innerHTML=''; var mp=$('manPick'); if(mp && typeof mp.onclick==='function'){ mp.onclick(); }
+      };
+      row.appendChild(use); manList.appendChild(row);
+    });
+  };
+  manBtn.addEventListener('click',doManFind);
+  manQ.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); doManFind(); } });
+}
+function refreshAdminList(resetPage){
+  var tbody = $('sessionTableBody');
+  if(!tbody) return;
+  
+  // Reset to page 1 if requested or if current page would be invalid
+  if(resetPage){
+    adminSessionsData.currentPage = 1;
+  }
+  
+  tbody.innerHTML = '';
+  var list = sessionsCache;
+  var pagination = $('adminPagination');
+  
+  // Ensure current page is valid
+  var totalPages = Math.ceil(list.length / adminSessionsData.itemsPerPage);
+  if(adminSessionsData.currentPage > totalPages && totalPages > 0){
+    adminSessionsData.currentPage = totalPages;
+  }
+  
+  if(!list.length){
+    var row = document.createElement('tr');
+    row.innerHTML = '<td colspan="7" style="padding:24px;text-align:center;color:var(--text-dark);opacity:.7">No sessions yet. Use the forms above to create sessions.</td>';
+    tbody.appendChild(row);
+    if(pagination) pagination.style.display = 'none';
+    return;
+  }
+  
+  // Pagination logic
+  var currentPage = adminSessionsData.currentPage;
+  var itemsPerPage = adminSessionsData.itemsPerPage;
+  var totalPages = Math.ceil(list.length / itemsPerPage);
+  var startIndex = (currentPage - 1) * itemsPerPage;
+  var endIndex = Math.min(startIndex + itemsPerPage, list.length);
+  var pageItems = list.slice(startIndex, endIndex);
+  
+  // Render only the current page
+  pageItems.forEach(function(s){
+    var row = document.createElement('tr');
+    row.style.borderBottom = '1px solid var(--border)';
+    row.style.transition = 'background 0.2s';
+    
+    var dt = new Date(s.dt);
+    var dateStr = dt.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+    var timeStr = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    
+    var regCount = (s.reg && s.reg.length) || 0;
+    var attCount = (s.att && s.att.length) || 0;
+    
+    row.innerHTML = 
+      '<td style="padding:12px;color:var(--text-dark)">' + dateStr + '</td>' +
+      '<td style="padding:12px;color:var(--text-dark)">' + timeStr + '</td>' +
+      '<td style="padding:12px;color:var(--text-dark)">' + (s.topic || 'Public Speaking') + '</td>' +
+      '<td style="padding:12px;text-align:center;color:var(--text-dark)">' + (s.capacity || 10) + '</td>' +
+      '<td style="padding:12px;text-align:center;color:var(--text-dark)">' + regCount + '</td>' +
+      '<td style="padding:12px;text-align:center;color:var(--text-dark)">' + attCount + '</td>' +
+      '<td style="padding:12px;text-align:center">' +
+        '<div class="row" style="gap:8px;justify-content:center">' +
+          '<button class="editSessionBtn" data-id="' + s.id + '" style="padding:6px 12px;font-size:13px">Edit</button>' +
+          '<button class="deleteSessionBtn red" data-id="' + s.id + '" style="padding:6px 12px;font-size:13px">Delete</button>' +
+        '</div>' +
+      '</td>';
+    
+    row.addEventListener('mouseenter', function(){ this.style.background = 'var(--bg-light)'; });
+    row.addEventListener('mouseleave', function(){ this.style.background = ''; });
+    
+    var editBtn = row.querySelector('.editSessionBtn');
+    editBtn.onclick = function(){
+      if(!adminUnlocked){ alert('Reopen Admin to unlock'); return; }
+      editSession(s);
+    };
+    
+    var deleteBtn = row.querySelector('.deleteSessionBtn');
+    deleteBtn.onclick = function(){
+      if(!adminUnlocked){ alert('Reopen Admin to unlock'); return; }
+      if(confirm('Delete this session? This will also delete all registrations for this session. This cannot be undone.')){
+        // Delete from Google Sheets only (no local storage)
+        deleteSessionFromSheets(s.id).then(function(response){
+          // Update in-memory cache after successful delete from Google Sheets
+          sessionsCache = sessionsCache.filter(function(sess){return sess.id!==s.id});
+          refreshAdminList(true);
+          refreshAttendance();
+          
+          // Show message with registration deletion count
+          var message = response.message || 'Session deleted from Google Sheets';
+          if(response.deletedRegistrations !== undefined && response.deletedRegistrations > 0){
+            message = 'Session and ' + response.deletedRegistrations + ' registration(s) deleted';
+          }
+          showToast(message);
+        }).catch(function(err){
+          console.error('Error deleting session from Google Sheets:', err);
+          showToast('Error deleting session: ' + (err.message || 'Unknown error'));
+        });
+      }
+    };
+    
+    tbody.appendChild(row);
+  });
+  
+  // Update pagination controls
+  if(totalPages > 1 && pagination){
+    pagination.style.display = 'flex';
+    $('adminPageInfo').textContent = 'Page ' + currentPage + ' of ' + totalPages + ' (' + list.length + ' total)';
+    $('adminPrevPage').disabled = currentPage === 1;
+    $('adminNextPage').disabled = currentPage === totalPages;
+    
+    // Style disabled buttons
+    if(currentPage === 1){
+      $('adminPrevPage').style.opacity = '0.5';
+      $('adminPrevPage').style.cursor = 'not-allowed';
+      $('adminPrevPage').style.pointerEvents = 'none';
+    } else {
+      $('adminPrevPage').style.opacity = '1';
+      $('adminPrevPage').style.cursor = 'pointer';
+      $('adminPrevPage').style.pointerEvents = 'auto';
+    }
+    
+    if(currentPage === totalPages){
+      $('adminNextPage').style.opacity = '0.5';
+      $('adminNextPage').style.cursor = 'not-allowed';
+      $('adminNextPage').style.pointerEvents = 'none';
+    } else {
+      $('adminNextPage').style.opacity = '1';
+      $('adminNextPage').style.cursor = 'pointer';
+      $('adminNextPage').style.pointerEvents = 'auto';
+    }
+  } else if(pagination){
+    pagination.style.display = 'none';
+  }
+}
+
+// Admin pagination event handlers
+$('adminPrevPage').onclick = function(){
+  if(adminSessionsData.currentPage > 1){
+    adminSessionsData.currentPage--;
+    refreshAdminList();
+    // Scroll to top of table
+    $('sessionTable').scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+};
+
+$('adminNextPage').onclick = function(){
+  var totalPages = Math.ceil(sessionsCache.length / adminSessionsData.itemsPerPage);
+  if(adminSessionsData.currentPage < totalPages){
+    adminSessionsData.currentPage++;
+    refreshAdminList();
+    // Scroll to top of table
+    $('sessionTable').scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+};
+
+function editSession(s){
+  // Create edit modal
+  var modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.style.display = 'flex';
+  
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.style.maxWidth = '500px';
+  card.style.width = '90%';
+  
+  var title = document.createElement('h2');
+  title.textContent = 'Edit Session';
+  card.appendChild(title);
+  
+  var form = document.createElement('div');
+  form.style.display = 'flex';
+  form.style.flexDirection = 'column';
+  form.style.gap = '12px';
+  
+  // Parse current session date/time
+  var dt = new Date(s.dt);
+  var dateStr = dt.toISOString().slice(0,10);
+  var timeStr = dt.toTimeString().slice(0,5);
+  
+  // Create input fields
+  var dateLabel = document.createElement('label');
+  dateLabel.textContent = 'Date';
+  dateLabel.style.display = 'flex';
+  dateLabel.style.flexDirection = 'column';
+  dateLabel.style.gap = '4px';
+  var dateInput = document.createElement('input');
+  dateInput.type = 'date';
+  dateInput.value = dateStr;
+  dateInput.style.padding = '8px';
+  dateInput.style.borderRadius = '8px';
+  dateInput.style.border = '1px solid var(--border)';
+  dateLabel.appendChild(dateInput);
+  form.appendChild(dateLabel);
+  
+  var timeLabel = document.createElement('label');
+  timeLabel.textContent = 'Time';
+  timeLabel.style.display = 'flex';
+  timeLabel.style.flexDirection = 'column';
+  timeLabel.style.gap = '4px';
+  var timeInput = document.createElement('input');
+  timeInput.type = 'time';
+  timeInput.value = timeStr;
+  timeInput.style.padding = '8px';
+  timeInput.style.borderRadius = '8px';
+  timeInput.style.border = '1px solid var(--border)';
+  timeLabel.appendChild(timeInput);
+  form.appendChild(timeLabel);
+  
+  var topicLabel = document.createElement('label');
+  topicLabel.textContent = 'Topic';
+  topicLabel.style.display = 'flex';
+  topicLabel.style.flexDirection = 'column';
+  topicLabel.style.gap = '4px';
+  var topicInput = document.createElement('input');
+  topicInput.type = 'text';
+  topicInput.value = s.topic || 'Public Speaking';
+  topicInput.style.padding = '8px';
+  topicInput.style.borderRadius = '8px';
+  topicInput.style.border = '1px solid var(--border)';
+  topicLabel.appendChild(topicInput);
+  form.appendChild(topicLabel);
+  
+  var capLabel = document.createElement('label');
+  capLabel.textContent = 'Capacity';
+  capLabel.style.display = 'flex';
+  capLabel.style.flexDirection = 'column';
+  capLabel.style.gap = '4px';
+  var capInput = document.createElement('input');
+  capInput.type = 'number';
+  capInput.min = '1';
+  capInput.value = s.capacity || 10;
+  capInput.style.padding = '8px';
+  capInput.style.borderRadius = '8px';
+  capInput.style.border = '1px solid var(--border)';
+  capLabel.appendChild(capInput);
+  form.appendChild(capLabel);
+  
+  card.appendChild(form);
+  
+  var btnRow = document.createElement('div');
+  btnRow.className = 'row';
+  btnRow.style.marginTop = '16px';
+  btnRow.style.justifyContent = 'flex-end';
+  btnRow.style.gap = '8px';
+  
+  var cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = function(){
+    document.body.removeChild(modal);
+  };
+  
+  var saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save';
+  saveBtn.className = 'primary';
+  saveBtn.onclick = function(){
+    var newDate = dateInput.value.trim();
+    var newTime = timeInput.value.trim();
+    var newTopic = topicInput.value.trim();
+    var newCap = Number(capInput.value);
+    
+    if(!newDate || !newTime){
+      alert('Please enter both date and time');
+      return;
+    }
+    
+    if(!newTopic){
+      alert('Please enter a topic');
+      return;
+    }
+    
+    if(!(newCap > 0)){
+      alert('Please enter a valid capacity (greater than 0)');
+      return;
+    }
+    
+    // Combine date and time
+  var dateParts = newDate.split('-');
+  var timeParts = newTime.split(':');
+  var newDt = new Date(Number(dateParts[0]), Number(dateParts[1])-1, Number(dateParts[2]), Number(timeParts[0])||0, Number(timeParts[1])||0, 0, 0);
+  
+    // Update session object
+  s.dt = newDt.toISOString();
+  s.topic = newTopic;
+  s.capacity = newCap;
+  
+  // Save to Google Sheets first
+  saveSessionToSheets(s).then(function(){
+    // Update in-memory cache after successful save to Google Sheets
+    var idx=-1;
+    for(var i=0;i<sessionsCache.length;i++){
+      if(sessionsCache[i].id===s.id){
+        idx=i;
+        break;
+      }
+    }
+    if(idx>=0) sessionsCache[idx]=s; 
+    else sessionsCache.push(s);
+    sessionsCache.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)});
+    refreshAdminList(true);
+    refreshAttendance();
+    showToast('Session updated and saved to Google Sheets');
+      document.body.removeChild(modal);
+  }).catch(function(err){
+    console.error('Error saving session to Google Sheets:', err);
+    // Even if Google Sheets fails, update local cache so changes aren't lost
+    var idx=-1;
+    for(var i=0;i<sessionsCache.length;i++){
+      if(sessionsCache[i].id===s.id){
+        idx=i;
+        break;
+      }
+    }
+    if(idx>=0) sessionsCache[idx]=s; 
+    else sessionsCache.push(s);
+    sessionsCache.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)});
+    refreshAdminList(true);
+    refreshAttendance();
+    
+    var isCorsError = err.message && (err.message.includes('CORS') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'));
+    var errorMsg = 'Failed to save session to Google Sheets: ' + (err.message || 'Unknown error');
+    
+    if(isCorsError){
+      errorMsg += '\n\n⚠️ CORS Error Detected:\n';
+      errorMsg += 'Google Apps Script Web Apps automatically add CORS headers when deployed correctly.\n\n';
+      errorMsg += 'To fix this, ensure your Web App is deployed properly:\n';
+      errorMsg += '1. Go to https://script.google.com\n';
+      errorMsg += '2. Open your project and click "Deploy" > "Manage deployments"\n';
+      errorMsg += '3. Click the pencil icon (✏️) to edit your deployment\n';
+      errorMsg += '4. Verify "Who has access" is set to "Anyone"\n';
+      errorMsg += '5. Verify the URL ends with /exec (not /dev)\n';
+      errorMsg += '6. Click "Deploy" again to activate the latest code\n\n';
+      errorMsg += 'Note: You must redeploy after any code changes for them to take effect.\n';
+      errorMsg += 'Session has been updated locally and will be available in this session.';
+    } else {
+      errorMsg += '\n\nSession has been updated locally and will be available in this session.\nPlease check your connection and try refreshing later.';
+    }
+    
+      alert(errorMsg);
+    showToast('Session updated (local only - check console for details)');
+      document.body.removeChild(modal);
+    });
+  };
+  
+  btnRow.appendChild(cancelBtn);
+  btnRow.appendChild(saveBtn);
+  card.appendChild(btnRow);
+  
+  modal.appendChild(card);
+  document.body.appendChild(modal);
+  
+  // Close on background click
+  modal.addEventListener('click', function(e){
+    if(e.target === modal){
+      document.body.removeChild(modal);
+    }
+  });
+  
+  // Focus on first input
+  setTimeout(function(){
+    dateInput.focus();
+  }, 100);
+}
+function saveSession(s){
+  // Save to Google Sheets only (no local storage)
+  saveSessionToSheets(s).then(function(){
+    // Update in-memory cache after successful save to Google Sheets
+    var idx=-1;
+    for(var i=0;i<sessionsCache.length;i++){
+      if(sessionsCache[i].id===s.id){
+        idx=i;
+        break;
+      }
+    }
+    if(idx>=0) sessionsCache[idx]=s; 
+    else sessionsCache.push(s);
+    sessionsCache.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)});
+  }).catch(function(err){
+    console.error('Error saving session to Google Sheets:', err);
+  });
+}
+
+function delSession(id){
+  // Delete from Google Sheets only (no local storage)
+  deleteSessionFromSheets(id).then(function(response){
+    // Update in-memory cache after successful delete from Google Sheets
+    sessionsCache = sessionsCache.filter(function(s){return s.id!==id});
+    refreshAdminList(true);
+    refreshAttendance();
+    
+    // Show message with registration deletion count
+    var message = response.message || 'Session deleted from Google Sheets';
+    if(response.deletedRegistrations !== undefined && response.deletedRegistrations > 0){
+      message = 'Session and ' + response.deletedRegistrations + ' registration(s) deleted';
+    }
+    showToast(message);
+  }).catch(function(err){
+    console.error('Error deleting session from Google Sheets:', err);
+    showToast('Error deleting session: ' + (err.message || 'Unknown error'));
+  });
+}
+function getSundaysOfMonth(ym){var parts=ym.split('-');var Y=Number(parts[0]),M=Number(parts[1]);var first=new Date(Y,M-1,1);var out=[];for(var d=new Date(first);d.getMonth()===first.getMonth();d.setDate(d.getDate()+1)){if(d.getDay()===0) out.push(new Date(d))}return out}
+// Setup all admin page buttons - ensure it runs after DOM is ready
+function setupAdminButtons(){
+  
+  // Bulk create button
+  var bulkBtn = $('bulkBtn');
+  if(bulkBtn){
+    // Remove any existing handlers by cloning and replacing
+    var newBulkBtn = bulkBtn.cloneNode(true);
+    bulkBtn.parentNode.replaceChild(newBulkBtn, bulkBtn);
+    bulkBtn = newBulkBtn;
+    
+    bulkBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(!adminUnlocked){ alert('Reopen Admin to unlock'); return; }
+      try {
+        var ym=$('bulkMonth').value;
+        if(!ym){alert('Choose a month');return}
+        var tA=$('timeA').value||'14:30';
+        var tB=$('timeB').value||'15:30';
+        var cap=Number($('bulkCap').value)||10;
+        var pref=$('bulkTopic').value||'Public Speaking';
+        var sundays=getSundaysOfMonth(ym);
+        if(sundays.length === 0){
+          alert('No Sundays found in the selected month');
+          return;
+        }
+        
+        // Filter out Sundays that are before today's date
+        var today = todayFloor();
+        var futureSundays = sundays.filter(function(sunday){
+          return new Date(sunday) >= today;
+        });
+        
+        if(futureSundays.length === 0){
+          alert('No future Sundays found in the selected month. All Sundays are in the past.');
+          return;
+        }
+        
+        var newSessions = [];
+        for(var i=0;i<futureSundays.length;i++){
+          var d=futureSundays[i];
+          var times=[tA,tB];
+          for(var j=0;j<times.length;j++){
+            var hm=times[j].split(':');
+            var h=Number(hm[0])||0,m=Number(hm[1])||0;
+            var dt=new Date(d);
+            dt.setHours(h,m,0,0);
+            
+            // Double-check: only create sessions for dates >= today
+            if(dt >= today){
+              // Automatically add dash and space between prefix and date if not already present
+              var topicPrefix = pref.trim();
+              if(topicPrefix && !topicPrefix.endsWith('—') && !topicPrefix.endsWith('-') && !topicPrefix.endsWith('–')){
+                topicPrefix += ' — ';
+              } else if(topicPrefix && (topicPrefix.endsWith('—') || topicPrefix.endsWith('-') || topicPrefix.endsWith('–'))){
+                topicPrefix += ' ';
+              }
+              var newSession = {id:'S'+Math.random().toString(36).slice(2,9),dt:dt.toISOString(),topic:topicPrefix+new Date(dt).toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'}),capacity:cap,reg:[],att:[]};
+              newSessions.push(newSession);
+            }
+          }
+        }
+        
+        
+        // Save all new sessions to Google Sheets first
+        Promise.all(newSessions.map(function(s){return saveSessionToSheets(s)})).then(function(results){
+          // After successful save to Google Sheets, update in-memory cache
+          newSessions.forEach(function(s){sessionsCache.push(s)});
+          sessionsCache.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)});
+          $('bulkOut').textContent='Created '+(newSessions.length)+' sessions and saved to Google Sheets.';
+          refreshAdminList(true);
+          refreshAttendance();
+          showToast('Sessions created and saved to Google Sheets');
+        }).catch(function(err){
+          console.error('Error saving sessions to Google Sheets:', err);
+          // Even if Google Sheets fails, save to local cache so sessions aren't lost
+          newSessions.forEach(function(s){sessionsCache.push(s)});
+          sessionsCache.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)});
+          refreshAdminList(true);
+          refreshAttendance();
+          
+          var isCorsError = err.message && (err.message.includes('CORS') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'));
+          var errorMsg = 'Failed to save sessions to Google Sheets: ' + (err.message || 'Unknown error');
+          
+          if(isCorsError){
+            errorMsg += '\n\n⚠️ CORS Error Detected:\n';
+            errorMsg += 'Google Apps Script Web Apps automatically add CORS headers when deployed correctly.\n\n';
+            errorMsg += 'To fix this, ensure your Web App is deployed properly:\n';
+            errorMsg += '1. Go to https://script.google.com\n';
+            errorMsg += '2. Open your project and click "Deploy" > "Manage deployments"\n';
+            errorMsg += '3. Click the pencil icon (✏️) to edit your deployment\n';
+            errorMsg += '4. Verify "Who has access" is set to "Anyone"\n';
+            errorMsg += '5. Verify the URL ends with /exec (not /dev)\n';
+            errorMsg += '6. Click "Deploy" again to activate the latest code\n\n';
+            errorMsg += 'Note: You must redeploy after any code changes for them to take effect.\n';
+            errorMsg += 'Sessions have been saved locally and will be available in this session.';
+          } else {
+            errorMsg += '\n\nSessions have been saved locally and will be available in this session.\nPlease check your connection and try refreshing later.';
+          }
+          
+          $('bulkOut').textContent='Created '+(newSessions.length)+' sessions (saved locally - Google Sheets sync failed).';
+          showToast('Sessions created (local only - check console for details)');
+        });
+      } catch(err) {
+        console.error('Error in bulk create:', err);
+      }
+    };
+  } else {
+    console.error('bulkBtn button not found');
+  }
+  
+  // Add single session button
+  var oneAddBtn = $('oneAdd');
+  if(oneAddBtn){
+    // Remove any existing handlers by cloning and replacing
+    var newOneAddBtn = oneAddBtn.cloneNode(true);
+    oneAddBtn.parentNode.replaceChild(newOneAddBtn, oneAddBtn);
+    oneAddBtn = newOneAddBtn;
+    
+    oneAddBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(!adminUnlocked){ alert('Reopen Admin to unlock'); return; }
+      try {
+        var d=$('oneDate').value;
+        var t=$('oneTime').value;
+        var cap=Number($('oneCap').value)||10;
+        var topic=$('oneTopic').value||'Public Speaking';
+        if(!d||!t){alert('Pick date and time');return}
+        var D=d.split('-');
+        var T=t.split(':');
+        var dt=new Date(Number(D[0]),Number(D[1])-1,Number(D[2]),Number(T[0])||0,Number(T[1])||0,0,0);
+        var newSession = {id:'S'+Math.random().toString(36).slice(2,9),dt:dt.toISOString(),topic:topic,capacity:cap,reg:[],att:[]};
+        
+        
+        // Save to Google Sheets first
+        saveSessionToSheets(newSession).then(function(result){
+          // After successful save to Google Sheets, update in-memory cache
+          sessionsCache.push(newSession);
+          sessionsCache.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)});
+          refreshAdminList(true);
+          refreshAttendance();
+          showToast('Session added and saved to Google Sheets');
+          // Clear form
+          $('oneDate').value = '';
+          $('oneTime').value = '';
+          $('oneTopic').value = '';
+        }).catch(function(err){
+          console.error('Error saving session to Google Sheets:', err);
+          // Even if Google Sheets fails, save to local cache so session isn't lost
+          sessionsCache.push(newSession);
+          sessionsCache.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)});
+          refreshAdminList(true);
+          refreshAttendance();
+          
+          var isCorsError = err.message && (err.message.includes('CORS') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'));
+          var errorMsg = 'Failed to save session to Google Sheets: ' + (err.message || 'Unknown error');
+          
+          if(isCorsError){
+            errorMsg += '\n\n⚠️ CORS Error Detected:\n';
+            errorMsg += 'Google Apps Script Web Apps automatically add CORS headers when deployed correctly.\n\n';
+            errorMsg += 'To fix this, ensure your Web App is deployed properly:\n';
+            errorMsg += '1. Go to https://script.google.com\n';
+            errorMsg += '2. Open your project and click "Deploy" > "Manage deployments"\n';
+            errorMsg += '3. Click the pencil icon (✏️) to edit your deployment\n';
+            errorMsg += '4. Verify "Who has access" is set to "Anyone"\n';
+            errorMsg += '5. Verify the URL ends with /exec (not /dev)\n';
+            errorMsg += '6. Click "Deploy" again to activate the latest code\n\n';
+            errorMsg += 'Note: You must redeploy after any code changes for them to take effect.\n';
+            errorMsg += 'Session has been saved locally and will be available in this session.';
+          } else {
+            errorMsg += '\n\nSession has been saved locally and will be available in this session.\nPlease check your connection and try refreshing later.';
+          }
+          
+          showToast('Session added (local only - check console for details)');
+          // Clear form even on error so user can try again
+          $('oneDate').value = '';
+          $('oneTime').value = '';
+          $('oneTopic').value = '';
+        });
+      } catch(err) {
+        console.error('Error adding session:', err);
+      }
+    };
+  } else {
+    console.error('oneAdd button not found');
+  }
+  
+  // Refresh list button
+  var admRefreshBtn = $('admRefresh');
+  if(admRefreshBtn){
+    // Remove any existing handlers by cloning and replacing
+    var newAdmRefreshBtn = admRefreshBtn.cloneNode(true);
+    admRefreshBtn.parentNode.replaceChild(newAdmRefreshBtn, admRefreshBtn);
+    admRefreshBtn = newAdmRefreshBtn;
+    
+    admRefreshBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(!adminUnlocked){ alert('Reopen Admin to unlock'); return; }
+      try {
+        loadSessionsFromSheets().then(function(){
+          refreshAdminList(true);
+          refreshAttendance();
+          showToast('Sessions refreshed from Google Sheets');
+        }).catch(function(err){
+          console.error('Error refreshing sessions:', err);
+          alert('Error refreshing sessions: ' + (err.message || 'Unknown error'));
+        });
+      } catch(err) {
+        console.error('Error in refresh button:', err);
+        alert('Error: ' + err.message);
+      }
+    };
+  } else {
+    console.error('admRefresh button not found');
+  }
+  
+  // Member Lookup Find button
+  var lkFindBtn = $('lkFind');
+  if(lkFindBtn){
+    var newLkFindBtn = lkFindBtn.cloneNode(true);
+    lkFindBtn.parentNode.replaceChild(newLkFindBtn, lkFindBtn);
+    lkFindBtn = newLkFindBtn;
+    lkFindBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Member lookup button clicked');
+      if(!adminUnlocked){alert('Open Admin with password first');return}
+      var nameQ=$('lkName').value.trim().toLowerCase();
+      var out=$('lkOut');
+      var printBtn = $('printConfirm');
+      
+      if(!nameQ){
+        alert('Enter a name to search');
+        return;
+      }
+      
+      // Hide print button and show loading
+      if(printBtn){
+        printBtn.style.display = 'none';
+        printBtn.disabled = true;
+      }
+      out.innerHTML='<div class="caption muted">Loading data from Google Sheets...</div>';
+      
+      // Fetch data from Google Sheets
+      console.log('Fetching data from Google Sheets...');
+      Promise.all([
+        getSessionsFromSheets(),
+        getRegistrationsFromSheets(true)
+      ]).then(function(results){
+        console.log('Data fetched - Sessions:', results[0] ? results[0].length : 0, 'Registrations:', results[1] ? results[1].length : 0);
+        var sessions = results[0] || [];
+        var registrations = results[1] || [];
+        var membersMap = getMembersFromRegistrations(registrations);
+        console.log('Members map created with', Object.keys(membersMap).length, 'members');
+        
+        // Refresh sessionsCache
+        sessionsCache = sessions;
+        
+        var results=[];
+        var chosen = null;
+        
+        // Search by name - keys in membersMap are registration IDs
+        var matchingRegIds = [];
+        Object.keys(membersMap).forEach(function(regId){
+          var member = membersMap[regId];
+          var fullName = (member.first + ' ' + member.last).trim().toLowerCase();
+          if(fullName.indexOf(nameQ) > -1 || member.name.toLowerCase().indexOf(nameQ) > -1){
+            matchingRegIds.push(regId);
+          }
+        });
+        
+        if(matchingRegIds.length === 0){
+          out.innerHTML='<div class="muted">No members found with that name.</div>';
+          if(printBtn) printBtn.style.display = 'none';
+          return;
+        }
+        
+        chosen = matchingRegIds[0]; // Use registration ID as chosen
+        results = sessions.filter(function(s){
+          var regIds = (s.reg || []);
+          var hasReg = regIds.some(function(regId){
+            // Check if this registration ID matches any of our matching registrations
+            return matchingRegIds.indexOf(regId) > -1;
+          });
+          // For attendance, check if badge matches any of the matching registrations' badgeIds
+          var hasAtt = (s.att || []).some(function(a){
+            return matchingRegIds.some(function(regId){
+              var reg = registrations.find(function(r){return r.id === regId});
+              return reg && reg.badgeId && reg.badgeId === a.badge;
+            });
+          });
+          return hasReg || hasAtt;
+        });
+        
+        if(!chosen){
+          out.innerHTML='<div class="muted">No member found.</div>';
+          if(printBtn) printBtn.style.display = 'none';
+          return;
+        }
+        
+        if(!results.length){
+          out.innerHTML='<div class="muted">No records found.</div>';
+          if(printBtn) printBtn.style.display = 'none';
+          return;
+        }
+        
+        // Clear loading message and prepare to show results
+        out.innerHTML='';
+        
+        // Show and enable print button after we have results
+        if(printBtn){
+          printBtn.style.display = '';
+          printBtn.disabled = false;
+          printBtn.onclick = function(){printConfirm(chosen, registrations)};
+        }
+        
+        results.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)}).forEach(function(s){
+          var regIds = (s.reg || []);
+          // Find matching registration - handle both registration IDs and badge IDs
+          var matchingReg = null;
+          var regIdToRemove = null;
+          
+          // chosen is now a registration ID (from membersMap key)
+          // Check if reg array contains this registration ID
+          if(regIds.indexOf(chosen) > -1){
+            matchingReg = registrations.find(function(r){return r.id === chosen});
+            regIdToRemove = chosen;
+          } else {
+            // Registration ID not found in session's reg array
+            matchingReg = null;
+          }
+          
+          var hasReg = !!matchingReg || regIds.indexOf(chosen) > -1;
+          var hasAtt = (s.att || []).some(function(a){return a.badge === chosen});
+          var who = matchingReg && matchingReg.registeredBy ? (' • registered by ' + matchingReg.registeredBy) : '';
+          
+          var row=document.createElement('div');
+          row.className='item';
+          row.innerHTML='<div><div>'+title(s)+'</div><div class="caption">'+(hasReg?'Registered':'')+' '+(hasAtt?'• Attended':'')+who+'</div></div>';
+          var del=document.createElement('button');
+          del.textContent='Delete registration';
+          del.className='red';
+          del.onclick=function(){
+            if(!hasReg){alert('No registration to delete');return}
+            if(!confirm('Remove this registration?')) return;
+            // Remove registration ID or badge ID from session reg array
+            s.reg = regIds.filter(function(regId){return regId !== regIdToRemove});
+            saveSessionToSheets(s).then(function(){
+              row.remove();
+              showToast('Removed');
+              // Refresh sessions cache
+              return getSessionsFromSheets();
+            }).then(function(sessions){
+              sessionsCache = sessions;
+            }).catch(function(err){
+              console.error('Error removing registration:', err);
+              alert('Error removing registration: ' + (err.message || 'Unknown error'));
+            });
+          };
+          row.appendChild(del);
+          out.appendChild(row);
+        });
+      }).catch(function(err){
+        console.error('Error loading data:', err);
+        out.innerHTML='<div class="muted">Error loading data from Google Sheets: ' + (err.message || 'Unknown error') + '</div>';
+        if(printBtn) printBtn.style.display = 'none';
+      });
+    };
+  }
+  
+  // Export buttons
+  var expRegBtn = $('expReg');
+  if(expRegBtn){
+    var newExpRegBtn = expRegBtn.cloneNode(true);
+    expRegBtn.parentNode.replaceChild(newExpRegBtn, expRegBtn);
+    expRegBtn = newExpRegBtn;
+    expRegBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Export registrations button clicked');
+      showToast('Loading data from Google Sheets...');
+      Promise.all([
+        getSessionsFromSheets(),
+        getRegistrationsFromSheets(true)
+      ]).then(function(results){
+        console.log('Export data loaded - Sessions:', results[0] ? results[0].length : 0, 'Registrations:', results[1] ? results[1].length : 0);
+        var sessions = results[0] || [];
+        var registrations = results[1] || [];
+        var membersMap = getMembersFromRegistrations(registrations);
+        
+        // Refresh sessionsCache
+        sessionsCache = sessions;
+        
+        var rows=[["RegistrationID","SessionID","Date","Time","Topic","Capacity","BadgeID","FirstName","LastName","FamilyRole","Age","House","Level","School","Parent","ParentEmail","RegisteredBy","RegisteredDateAndTime"]];
+        
+        sessions.forEach(function(s){
+          var regIds = (s.reg || []);
+          regIds.forEach(function(regId){
+            // Find registration by ID
+            var reg = registrations.find(function(r){return r.id === regId});
+            
+            if(reg){
+              var dt = new Date(s.dt);
+              rows.push([
+                reg.id || regId,
+                s.id,
+                ymd(dt),
+                dt.toTimeString().slice(0,5),
+                s.topic || '',
+                s.capacity || '',
+                reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '',
+                reg.firstName || reg['First Name'] || reg['firstName'] || '',
+                reg.lastName || reg['Last Name'] || reg['lastName'] || '',
+                reg.familyRole || reg['Family Role'] || reg['familyRole'] || '',
+                reg.age || reg['Age'] || '',
+                reg.house || reg['House'] || '',
+                reg.level || reg['Level'] || '',
+                reg.school || reg['School'] || '',
+                reg.parent || reg['Parent'] || '',
+                reg.parentEmail || reg['Parent Email'] || reg['parentEmail'] || reg.email || '',
+                reg.registeredBy || reg['Registered By'] || reg['registeredBy'] || '',
+                reg.registeredDateAndTime || reg['Registered Date And Time'] || reg['registeredDateAndTime'] || ''
+              ]);
+            }
+          });
+        });
+        
+        var csv=rows.map(function(r){return r.map(function(v){v=v==null?'':String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')}).join('\n');
+        download('registrations.csv',csv,'text/csv');
+        showToast('Registrations exported');
+      }).catch(function(err){
+        console.error('Error exporting registrations:', err);
+        alert('Error exporting registrations: ' + (err.message || 'Unknown error'));
+      });
+    };
+  }
+  
+  var expAttBtn = $('expAtt');
+  if(expAttBtn){
+    var newExpAttBtn = expAttBtn.cloneNode(true);
+    expAttBtn.parentNode.replaceChild(newExpAttBtn, expAttBtn);
+    expAttBtn = newExpAttBtn;
+    expAttBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Export attendance button clicked');
+      showToast('Loading data from Google Sheets...');
+      Promise.all([
+        getSessionsFromSheets(),
+        getRegistrationsFromSheets(true)
+      ]).then(function(results){
+        console.log('Attendance export - Sessions loaded:', results[0] ? results[0].length : 0, 'Registrations:', results[1] ? results[1].length : 0);
+        var sessions = results[0] || [];
+        var registrations = results[1] || [];
+        sessionsCache = sessions;
+        
+        // Create a map of badgeId to member info from registrations
+        var badgeToMember = {};
+        registrations.forEach(function(reg){
+          var badgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
+          if(badgeId && !badgeToMember[badgeId]){
+            badgeToMember[badgeId] = {
+              firstName: reg.firstName || reg['First Name'] || reg['firstName'] || '',
+              lastName: reg.lastName || reg['Last Name'] || reg['lastName'] || '',
+              familyRole: reg.familyRole || reg['Family Role'] || reg['familyRole'] || '',
+              age: reg.age || reg['Age'] || '',
+              house: reg.house || reg['House'] || '',
+              level: reg.level || reg['Level'] || '',
+              school: reg.school || reg['School'] || '',
+              parent: reg.parent || reg['Parent'] || '',
+              parentEmail: reg.parentEmail || reg['Parent Email'] || reg['parentEmail'] || reg.email || ''
+            };
+          }
+        });
+        
+        var rows=[["SessionID","Date","Time","Topic","BadgeID","FirstName","LastName","FamilyRole","Age","House","Level","School","Parent","ParentEmail","Seat","Timestamp"]];
+        sessions.forEach(function(s){
+          var attArray = s.att || [];
+          if(!Array.isArray(attArray)){
+            try {
+              attArray = typeof attArray === 'string' ? JSON.parse(attArray) : [];
+            } catch(e){
+              attArray = [];
+            }
+          }
+          attArray.forEach(function(a){
+            var dt = new Date(s.dt);
+            var badgeId = a.badge || '';
+            var member = badgeToMember[badgeId] || {};
+            rows.push([
+              s.id,
+              ymd(dt),
+              dt.toTimeString().slice(0,5),
+              s.topic || '',
+              badgeId,
+              member.firstName || '',
+              member.lastName || '',
+              member.familyRole || '',
+              member.age || '',
+              member.house || '',
+              member.level || '',
+              member.school || '',
+              member.parent || '',
+              member.parentEmail || '',
+              a.seat || '',
+              a.ts ? new Date(a.ts).toISOString() : ''
+            ]);
+          });
+        });
+        var csv=rows.map(function(r){return r.map(function(v){v=v==null?'':String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')}).join('\n');
+        download('attendance.csv',csv,'text/csv');
+        showToast('Attendance exported');
+      }).catch(function(err){
+        console.error('Error exporting attendance:', err);
+        alert('Error exporting attendance: ' + (err.message || 'Unknown error'));
+      });
+    };
+  }
+  
+  var backupBtn = $('backupBtn');
+  if(backupBtn){
+    var newBackupBtn = backupBtn.cloneNode(true);
+    backupBtn.parentNode.replaceChild(newBackupBtn, backupBtn);
+    backupBtn = newBackupBtn;
+      backupBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Backup button clicked');
+      showToast('Backing up data from Google Sheets...');
+      Promise.all([
+        getSessionsFromSheets(),
+        getRegistrationsFromSheets(true),
+        getValidationData()
+      ]).then(function(results){
+        console.log('Backup data loaded - Sessions:', results[0] ? results[0].length : 0, 'Registrations:', results[1] ? results[1].length : 0, 'Validation:', results[2] ? results[2].length : 0);
+        var sessions = results[0] || [];
+        var registrations = results[1] || [];
+        var validation = results[2] || [];
+        var backupData = {
+          sessions: sessions,
+          registrations: registrations,
+          validation: validation,
+          exportedAt: new Date().toISOString(),
+          source: 'Google Sheets'
+        };
+        var json = JSON.stringify(backupData, null, 2);
+        download('steamoji_backup_' + new Date().toISOString().slice(0,10) + '.json', json, 'application/json');
+        showToast('Backup completed');
+      }).catch(function(err){
+        console.error('Error creating backup:', err);
+        alert('Error creating backup: ' + (err.message || 'Unknown error'));
+      });
+    };
+  }
+  
+}
+
+// Setup buttons when DOM is ready
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', setupAdminButtons);
+} else {
+  // DOM already loaded
+  setupAdminButtons();
+}
+
+// Verify buttons exist
+console.log('Button check:', {
+  lkFind: !!$('lkFind'),
+  expReg: !!$('expReg'),
+  expAtt: !!$('expAtt'),
+  backupBtn: !!$('backupBtn'),
+});
+// Duplicate export handlers removed - now handled in setupAdminButtons
+function download(name,text,type){var blob=new Blob([text],{type:type||'text/plain'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(function(){URL.revokeObjectURL(url)},1000)}
+// Duplicate backup handler removed - now handled in setupAdminButtons
+// Restore functionality removed
+// Duplicate handlers removed - now handled in setupAdminButtons
+function printConfirm(regIdOrBadge, registrations){
+  // regIdOrBadge could be a registration ID (from membersMap key) or a badgeId
+  console.log('printConfirm called with:', regIdOrBadge);
+  
+  Promise.all([
+    getRegistrationsFromSheets(true),
+    getSessionsFromSheets()
+  ]).then(function(results){
+    var allRegs = results[0] || [];
+    var allSessions = results[1] || [];
+    
+    // Refresh sessionsCache
+    sessionsCache = allSessions;
+    
+    // Find the registration(s) - could be by registration ID or badgeId
+    var matchingRegs = allRegs.filter(function(r){
+      var rId = r.id || '';
+      var rBadgeId = r.badgeId || r['Badge ID'] || r['badgeId'] || '';
+      return rId === regIdOrBadge || rBadgeId === regIdOrBadge;
+    });
+    
+    console.log('Matching registrations:', matchingRegs.length, matchingRegs);
+    
+    if(matchingRegs.length === 0){
+      alert('No registration found for: ' + regIdOrBadge);
+      return;
+    }
+    
+    // Use the first matching registration to get member info
+    var reg = matchingRegs[0];
+    var badgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
+    var firstName = reg.firstName || reg['First Name'] || reg['firstName'] || '';
+    var lastName = reg.lastName || reg['Last Name'] || reg['lastName'] || '';
+    var name = (firstName + ' ' + lastName).trim() || 'Member';
+    
+    console.log('Member info:', {name: name, badgeId: badgeId, regId: reg.id});
+    
+    // Get all registration IDs for this member (by badgeId or name+email)
+    var memberRegIds = [];
+    if(badgeId && badgeId.trim() !== ''){
+      // Find all registrations with this badgeId
+      allRegs.forEach(function(r){
+        var rBadgeId = r.badgeId || r['Badge ID'] || r['badgeId'] || '';
+        if(rBadgeId === badgeId && r.id){
+          memberRegIds.push(r.id);
+        }
+      });
+    } else {
+      // If no badgeId, match by name and email
+      var parentEmail = reg.parentEmail || reg['Parent Email'] || reg['parentEmail'] || '';
+      allRegs.forEach(function(r){
+        var rFirstName = (r.firstName || r['First Name'] || r['firstName'] || '').trim().toLowerCase();
+        var rLastName = (r.lastName || r['Last Name'] || r['lastName'] || '').trim().toLowerCase();
+        var rEmail = (r.parentEmail || r['Parent Email'] || r['parentEmail'] || '').trim().toLowerCase();
+        if(rFirstName === firstName.toLowerCase() && rLastName === lastName.toLowerCase() && rEmail === parentEmail.toLowerCase()){
+          if(r.id) memberRegIds.push(r.id);
+        }
+      });
+    }
+    
+    console.log('Member registration IDs:', memberRegIds);
+    
+    // Find sessions where this member is registered (by registration IDs)
+    var list = allSessions.filter(function(s){
+      var regIds = (s.reg || []);
+      if(!Array.isArray(regIds)){
+        // Handle case where reg might be a JSON string
+        try {
+          regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
+        } catch(e){
+          regIds = [];
+        }
+      }
+      return regIds.some(function(regId){
+        return memberRegIds.indexOf(regId) > -1;
+      });
+    });
+    
+    console.log('Found sessions:', list.length, list);
+    
+    if(list.length === 0){
+      alert('No registered sessions found for this member');
+      return;
+    }
+    
+    var html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Parent confirmation</title><style>body{font-family:system-ui,Segoe UI,Roboto;padding:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #555;padding:8px;text-align:left}.muted{opacity:.75}</style></head><body><h1>Steamoji — Parent Confirmation</h1><div class="muted">Member: <b>'+name+'</b> • Badge: <b>'+badgeId+'</b></div><p>Below are the sessions your child is registered for.</p><table><thead><tr><th>Date</th><th>Time</th><th>Topic</th></tr></thead><tbody>'+list.map(function(s){return '<tr><td>'+new Date(s.dt).toLocaleDateString()+'</td><td>'+new Date(s.dt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})+'</td><td>'+s.topic+'</td></tr>'}).join('\n')+'</tbody></table><p class="muted">Generated '+new Date().toLocaleString()+'</p><script>window.print()<\/script></body></html>';
+    var w=window.open('','_blank');
+    w.document.write(html);
+    w.document.close();
+  }).catch(function(err){
+    console.error('Error loading data for print:', err);
+    alert('Error loading registration data: ' + (err.message || 'Unknown error'));
+  });
+}
+$('startScanAtt').disabled=false;$('stopScanAtt').disabled=false
+})();
+</script>
+</body>
+</html>
+
