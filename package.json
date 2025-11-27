@@ -1,0 +1,12 @@
+{
+  "name": "steamoji-workshop-registration",
+  "version": "1.0.0",
+  "description": "Steamoji Workshop Registration and Attendance System",
+  "scripts": {
+    "build": "node build-config.js"
+  },
+  "engines": {
+    "node": ">=14.x"
+  }
+}
+
