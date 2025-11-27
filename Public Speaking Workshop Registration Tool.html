@@ -396,11 +396,41 @@
     transform: scaleX(1);
     transition: transform 0.3s ease;
     transform-origin: center center;
+    display: block;
+    margin: 0 auto;
   }
   
   /* Container for video to handle rotation */
   #scanPage .panel {
     overflow: visible;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+  }
+  
+  /* Video wrapper for proper centering when rotated */
+  #video {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+  }
+  
+  /* Ensure video is centered when rotated on iPad */
+  @media screen and (min-width: 768px) {
+    #scanPage .panel {
+      align-items: center;
+      justify-content: flex-start;
+    }
+    
+    #scanPage .panel > #video {
+      align-self: center;
+      justify-self: center;
+      margin: 20px auto;
+    }
   }
   
   /* Handle device rotation for video */
@@ -3379,24 +3409,89 @@ function startCam(ctx,mode){
         }
         
         // Fix iPad Pro camera orientation issue
+        // Get screen orientation angle if available
+        var orientationAngle = 0;
+        if(window.screen && window.screen.orientation){
+          orientationAngle = window.screen.orientation.angle || 0;
+        } else if(window.orientation !== undefined){
+          orientationAngle = window.orientation;
+        }
+        
+        // Normalize orientation angle to 0-360 range, handling negative values
+        orientationAngle = ((orientationAngle % 360) + 360) % 360;
+        
         // If device is portrait but video stream is landscape, rotate it
         if(isiPad && isPortrait && videoIsLandscape){
-          // Rotate video 90 degrees clockwise to fix orientation
-          ctx.video.style.transform = 'rotate(90deg)';
+          // Determine rotation based on orientation angle
+          // Portrait mode: 0° (normal upright) or 180° (upside down)
+          var rotation = 90; // Default: rotate 90° clockwise for normal portrait
+          
+          // Check if device is upside down (180°)
+          if(orientationAngle >= 135 && orientationAngle <= 225){
+            // Device is upside down (180°), rotate -90° to correct it
+            rotation = -90;
+          } else {
+            // Normal portrait (0°), rotate 90° clockwise
+            rotation = 90;
+          }
+          
+          // Apply rotation and center the video
+          ctx.video.style.transform = 'rotate(' + rotation + 'deg)';
           ctx.video.style.width = 'auto';
-          ctx.video.style.height = '100%';
+          ctx.video.style.height = 'auto';
           ctx.video.style.maxWidth = '80vh';
-          ctx.video.style.maxHeight = '100vw';
+          ctx.video.style.maxHeight = '70vh';
+          // Reset positioning
+          ctx.video.style.margin = '20px auto';
+          ctx.video.style.display = 'block';
+          ctx.video.style.position = 'relative';
+          ctx.video.style.left = 'auto';
+          ctx.video.style.right = 'auto';
+          ctx.video.style.top = 'auto';
+          ctx.video.style.bottom = 'auto';
+          ctx.video.style.transformOrigin = 'center center';
+          
+          // Ensure parent container centers the video
+          if(ctx.video.parentElement){
+            ctx.video.parentElement.style.display = 'flex';
+            ctx.video.parentElement.style.flexDirection = 'column';
+            ctx.video.parentElement.style.alignItems = 'center';
+            ctx.video.parentElement.style.justifyContent = 'flex-start';
+          }
+          
+          // Force recalculation for proper centering after rotation
+          setTimeout(function(){
+            if(ctx && ctx.video){
+              // Trigger reflow to ensure proper centering
+              var height = ctx.video.offsetHeight;
+              var width = ctx.video.offsetWidth;
+              // Re-center after dimensions are calculated
+              ctx.video.style.margin = '20px auto';
+            }
+          }, 300);
         } else if(isiPad && isLandscape && !videoIsLandscape){
           // Device is landscape but video is portrait
-          ctx.video.style.transform = 'rotate(-90deg)';
+          if(orientationAngle === 90){
+            ctx.video.style.transform = 'rotate(-90deg)';
+          } else {
+            ctx.video.style.transform = 'rotate(90deg)';
+          }
           ctx.video.style.width = 'auto';
-          ctx.video.style.height = '100%';
+          ctx.video.style.height = 'auto';
+          ctx.video.style.maxWidth = '80vh';
+          ctx.video.style.maxHeight = '70vh';
+          ctx.video.style.margin = '0 auto';
+          ctx.video.style.display = 'block';
+          ctx.video.style.position = 'relative';
+          ctx.video.style.left = 'auto';
+          ctx.video.style.right = 'auto';
         } else {
           // Normal orientation, no rotation needed
           ctx.video.style.transform = '';
           ctx.video.style.width = '100%';
           ctx.video.style.height = 'auto';
+          ctx.video.style.margin = '0 auto';
+          ctx.video.style.display = 'block';
         }
         
         // Ensure video maintains aspect ratio when not rotated
