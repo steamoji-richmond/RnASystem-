@@ -395,6 +395,12 @@
     object-fit:cover;
     transform: scaleX(1);
     transition: transform 0.3s ease;
+    transform-origin: center center;
+  }
+  
+  /* Container for video to handle rotation */
+  #scanPage .panel {
+    overflow: visible;
   }
   
   /* Handle device rotation for video */
@@ -411,6 +417,13 @@
       max-height: 60vh;
       height: auto;
       min-height: 300px;
+    }
+  }
+  
+  /* iPad specific fixes */
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    #video{
+      transform-origin: center center;
     }
   }
   .toast{
@@ -3343,22 +3356,54 @@ function startCam(ctx,mode){
     function updateVideoForOrientation(){
       if(!ctx || !ctx.video) return;
       
-      // Get current orientation
+      // Get current device orientation
       var isLandscape = window.innerWidth > window.innerHeight;
+      var isPortrait = window.innerHeight > window.innerWidth;
       
-      // Adjust video styling based on orientation
-      if(isLandscape){
-        ctx.video.style.maxHeight = '80vh';
-        ctx.video.style.height = 'auto';
-      } else {
-        ctx.video.style.maxHeight = '60vh';
-        ctx.video.style.height = 'auto';
-      }
+      // Check if device is iPad
+      var isiPad = /iPad/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       
-      // Ensure video maintains aspect ratio
+      // Wait for video dimensions to be available
       if(ctx.video.videoWidth && ctx.video.videoHeight){
-        var aspectRatio = ctx.video.videoWidth / ctx.video.videoHeight;
-        ctx.video.style.aspectRatio = aspectRatio.toString();
+        var videoWidth = ctx.video.videoWidth;
+        var videoHeight = ctx.video.videoHeight;
+        var videoIsLandscape = videoWidth > videoHeight;
+        
+        // Adjust video styling based on orientation
+        if(isLandscape){
+          ctx.video.style.maxHeight = '80vh';
+          ctx.video.style.height = 'auto';
+        } else {
+          ctx.video.style.maxHeight = '60vh';
+          ctx.video.style.height = 'auto';
+        }
+        
+        // Fix iPad Pro camera orientation issue
+        // If device is portrait but video stream is landscape, rotate it
+        if(isiPad && isPortrait && videoIsLandscape){
+          // Rotate video 90 degrees clockwise to fix orientation
+          ctx.video.style.transform = 'rotate(90deg)';
+          ctx.video.style.width = 'auto';
+          ctx.video.style.height = '100%';
+          ctx.video.style.maxWidth = '80vh';
+          ctx.video.style.maxHeight = '100vw';
+        } else if(isiPad && isLandscape && !videoIsLandscape){
+          // Device is landscape but video is portrait
+          ctx.video.style.transform = 'rotate(-90deg)';
+          ctx.video.style.width = 'auto';
+          ctx.video.style.height = '100%';
+        } else {
+          // Normal orientation, no rotation needed
+          ctx.video.style.transform = '';
+          ctx.video.style.width = '100%';
+          ctx.video.style.height = 'auto';
+        }
+        
+        // Ensure video maintains aspect ratio when not rotated
+        if(!ctx.video.style.transform || ctx.video.style.transform === ''){
+          var aspectRatio = videoWidth / videoHeight;
+          ctx.video.style.aspectRatio = aspectRatio.toString();
+        }
       }
     }
     
