@@ -456,8 +456,10 @@ This method keeps secrets out of Git by using Vercel's environment variables.
 
 2. **Configure Build Settings**
    - **Build Command**: `npm run build`
-   - **Output Directory**: `.`
+   - **Output Directory**: `.` (root directory - this is already set in `vercel.json`)
    - **Install Command**: `npm install`
+   
+   **Note**: The `vercel.json` file already includes `outputDirectory: "."`, so you may not need to set this manually in the dashboard.
 
 3. **Deploy**
    - The build script automatically generates `config.js` from environment variables
@@ -570,11 +572,19 @@ This method keeps secrets out of Git by using Vercel's environment variables.
 
 **Symptoms**: Deployment fails during build
 
-**Solutions**:
+**Common Errors**:
+
+**"no output directory name 'public' found"**:
+- ✅ **Fixed**: The `vercel.json` file now includes `"outputDirectory": "."`
+- Ensure `vercel.json` is committed to Git
+- The output directory is set to root (`.`) which is correct for this project
+
+**Other Build Errors**:
 - Verify `package.json` exists and has build script
 - Check `build-config.js` is committed to Git
 - Ensure Node.js is available (Vercel supports by default)
 - Review Vercel build logs for specific errors
+- Verify `vercel.json` is in the project root
 
 #### Environment Variables Not Working
 

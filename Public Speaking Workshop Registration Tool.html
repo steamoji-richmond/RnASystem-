@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#0072CE" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="screen-orientation" content="portrait" />
+<meta name="mobile-web-app-capable" content="yes" />
 <title>Steamoji — Public Speaking Workshops</title>
 <style>
   :root{
@@ -391,6 +393,25 @@
     border:2px dashed var(--border);
     border-radius:16px;
     object-fit:cover;
+    transform: scaleX(1);
+    transition: transform 0.3s ease;
+  }
+  
+  /* Handle device rotation for video */
+  @media screen and (orientation: landscape) {
+    #video{
+      max-height: 80vh;
+      height: auto;
+      min-height: 300px;
+    }
+  }
+  
+  @media screen and (orientation: portrait) {
+    #video{
+      max-height: 60vh;
+      height: auto;
+      min-height: 300px;
+    }
   }
   .toast{
     position:fixed;
@@ -3295,9 +3316,18 @@ function startCam(ctx,mode){
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){alert('Camera not available');return}
   var isMobile=/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent);
   var constraints={video:{},audio:false};
-  if(isMobile){ constraints.video.facingMode={ideal:'environment'}; }
-  else { constraints.video.width={ideal:1280}; constraints.video.height={ideal:720}; }
-
+  
+  // Handle mobile orientation
+  if(isMobile){ 
+    constraints.video.facingMode={ideal:'environment'};
+    // Allow video to adapt to device orientation
+    constraints.video.width = {ideal: 1280};
+    constraints.video.height = {ideal: 720};
+  } else { 
+    constraints.video.width={ideal:1280}; 
+    constraints.video.height={ideal:720}; 
+  }
+  
   navigator.mediaDevices.getUserMedia(constraints).then(function(stream){
     if(!ctx.video){
       alert('Video element not found');
@@ -3309,8 +3339,42 @@ function startCam(ctx,mode){
     ctx.track=stream.getVideoTracks&&stream.getVideoTracks()[0];
     ctx.ic=(window.ImageCapture&&ctx.track)?new ImageCapture(ctx.track):null;
     
+    // Handle orientation changes for video
+    function updateVideoForOrientation(){
+      if(!ctx || !ctx.video) return;
+      
+      // Get current orientation
+      var isLandscape = window.innerWidth > window.innerHeight;
+      
+      // Adjust video styling based on orientation
+      if(isLandscape){
+        ctx.video.style.maxHeight = '80vh';
+        ctx.video.style.height = 'auto';
+      } else {
+        ctx.video.style.maxHeight = '60vh';
+        ctx.video.style.height = 'auto';
+      }
+      
+      // Ensure video maintains aspect ratio
+      if(ctx.video.videoWidth && ctx.video.videoHeight){
+        var aspectRatio = ctx.video.videoWidth / ctx.video.videoHeight;
+        ctx.video.style.aspectRatio = aspectRatio.toString();
+      }
+    }
+    
+    // Listen for orientation and resize changes
+    var orientationHandler = function(){
+      setTimeout(updateVideoForOrientation, 100);
+    };
+    window.addEventListener('orientationchange', orientationHandler);
+    window.addEventListener('resize', orientationHandler);
+    
+    // Store handler for cleanup
+    ctx.orientationHandler = orientationHandler;
+    
     // Wait for video to be ready before starting scanning
     ctx.video.onloadedmetadata = function(){
+      updateVideoForOrientation();
       var p=ctx.video.play(); 
       if(p&&typeof p.then==='function'){ 
         p.then(function(){
@@ -3403,6 +3467,14 @@ function startCam(ctx,mode){
 function stopCam(ctx){ 
   if(!ctx) return; // Safety check
   ctx.scanning=false; 
+  
+  // Remove orientation change listeners
+  if(ctx.orientationHandler){
+    window.removeEventListener('orientationchange', ctx.orientationHandler);
+    window.removeEventListener('resize', ctx.orientationHandler);
+    ctx.orientationHandler = null;
+  }
+  
   if(ctx.stream){ 
     try{ 
       ctx.stream.getTracks().forEach(function(t){t.stop()}) 
