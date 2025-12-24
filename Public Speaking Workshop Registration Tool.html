@@ -1989,29 +1989,44 @@ function renderRegisteredSessions(){
     var timeStr = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     
     // Check if session is in the past
+    var now = new Date();
     var today = new Date();
     today.setHours(0, 0, 0, 0);
     var sessionDateOnly = new Date(dt);
     sessionDateOnly.setHours(0, 0, 0, 0);
     var isPast = sessionDateOnly < today;
     
+    // Check if session is within 48 hours (2 days)
+    var hoursUntilSession = (dt - now) / (1000 * 60 * 60); // Convert to hours
+    var isWithin48Hours = hoursUntilSession > 0 && hoursUntilSession <= 48;
+    
     // Apply gray styling to past sessions
     if(isPast){
       row.style.opacity = '0.6';
     }
     
-    row.innerHTML = '<div><div style="font-weight:600">' + title(s) + '</div><div class="caption muted">Registered' + (isPast ? ' (Past)' : '') + '</div></div>';
+    var statusText = 'Registered';
+    if(isPast){
+      statusText += ' (Past)';
+    } else if(isWithin48Hours){
+      statusText += ' (Within 48 hours)';
+    }
+    
+    row.innerHTML = '<div><div style="font-weight:600">' + title(s) + '</div><div class="caption muted">' + statusText + '</div></div>';
     
     var delBtn = document.createElement('button');
     delBtn.className = 'red';
     delBtn.textContent = 'Cancel Registration';
     
-    // Disable and gray out delete button for past sessions
-    if(isPast){
+    // Disable and gray out delete button for past sessions or sessions within 48 hours
+    if(isPast || isWithin48Hours){
       delBtn.disabled = true;
       delBtn.style.opacity = '0.5';
       delBtn.style.cursor = 'not-allowed';
       delBtn.style.pointerEvents = 'none';
+      if(isWithin48Hours){
+        delBtn.title = 'Cancellation is not allowed within 48 hours of the session';
+      }
     } else {
       delBtn.onclick = function(){
       if(!confirm('Are you sure you want to cancel this registration?')) return;
