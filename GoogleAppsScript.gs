@@ -192,10 +192,21 @@ function doPost(e) {
       case "updateAllRegistrationsForUser":
         result = updateAllRegistrationsForUser(data);
         break;
+      case "deleteRegistration":
+        var registrationId = data.registrationId || (e.parameter && e.parameter.registrationId) || '';
+        if (!registrationId) {
+          result = {
+            success: false,
+            error: "Registration ID is required for deleteRegistration"
+          };
+        } else {
+          result = deleteRegistrationData(registrationId);
+        }
+        break;
       default:
         result = {
           success: false,
-          error: "Invalid action: '" + action + "'. Valid actions: saveSession, register, deleteSession, saveAllSessions, updateValidation, deleteValidation, updateRegistration, updateAllRegistrationsForUser"
+          error: "Invalid action: '" + action + "'. Valid actions: saveSession, register, deleteSession, saveAllSessions, updateValidation, deleteValidation, updateRegistration, updateAllRegistrationsForUser, deleteRegistration"
         };
     }
     
@@ -912,6 +923,133 @@ function deleteSessionData(sessionId) {
         deletedRegistrations: deletedRegistrations
       };
     }
+  } catch (err) {
+    return {
+      success: false,
+      error: err.toString()
+    };
+  }
+}
+
+/**
+ * Delete a registration by registration ID
+ * Also removes the registration ID or badge ID from the session's reg array
+ */
+function deleteRegistrationData(registrationId) {
+  try {
+    if (!registrationId) {
+      return {
+        success: false,
+        error: 'Registration ID is required'
+      };
+    }
+    
+    // Delete registration from registration sheet
+    var regSheet = SpreadsheetApp.openById(REGISTRATION_SHEET_ID).getSheetByName(REGISTRATION_SHEET_NAME);
+    var regData = regSheet.getDataRange().getValues();
+    
+    if (regData.length === 0) {
+      return {
+        success: false,
+        error: 'Registration sheet is empty'
+      };
+    }
+    
+    var regHeaders = regData[0];
+    var idColIndex = regHeaders.indexOf('id');
+    
+    // Try alternative column names if id not found
+    if (idColIndex === -1) {
+      idColIndex = regHeaders.indexOf('ID');
+    }
+    if (idColIndex === -1) {
+      idColIndex = regHeaders.indexOf('registrationId');
+    }
+    
+    if (idColIndex === -1) {
+      return {
+        success: false,
+        error: 'ID column not found in registration sheet'
+      };
+    }
+    
+    // Find and delete the registration row
+    var registrationDeleted = false;
+    var registrationData = null;
+    for (var i = regData.length - 1; i >= 1; i--) {
+      var rowId = (regData[i][idColIndex] || '').toString().trim();
+      if (rowId === registrationId.toString().trim()) {
+        // Store registration data before deleting (to get sessionId and badgeId)
+        registrationData = {};
+        regHeaders.forEach(function(header, index) {
+          registrationData[header] = regData[i][index] || '';
+        });
+        regSheet.deleteRow(i + 1); // +1 because sheet rows are 1-indexed
+        registrationDeleted = true;
+        break;
+      }
+    }
+    
+    if (!registrationDeleted) {
+      return {
+        success: false,
+        error: 'Registration not found with ID: ' + registrationId
+      };
+    }
+    
+    // Get sessionId and badgeId from the deleted registration
+    var sessionId = registrationData.sessionId || registrationData['Session ID'] || registrationData['sessionId'] || '';
+    var badgeId = registrationData.badgeId || registrationData['Badge ID'] || registrationData['badgeId'] || '';
+    
+    // Remove registration ID or badge ID from session's reg array
+    if (sessionId) {
+      var sessionSheet = SpreadsheetApp.openById(SESSIONS_SHEET_ID).getSheetByName(SESSIONS_SHEET_NAME);
+      var sessionData = sessionSheet.getDataRange().getValues();
+      
+      if (sessionData.length > 0) {
+        var sessionHeaders = sessionData[0];
+        var sessionIdColIndex = sessionHeaders.indexOf('id');
+        var regColIndex = sessionHeaders.indexOf('reg');
+        
+        if (sessionIdColIndex !== -1 && regColIndex !== -1) {
+          for (var i = 1; i < sessionData.length; i++) {
+            var rowSessionId = (sessionData[i][sessionIdColIndex] || '').toString().trim();
+            if (rowSessionId === sessionId.toString().trim()) {
+              // Get current reg array
+              var regArrayStr = sessionData[i][regColIndex] || '[]';
+              var regArray = [];
+              try {
+                if (typeof regArrayStr === 'string') {
+                  regArray = JSON.parse(regArrayStr);
+                } else if (Array.isArray(regArrayStr)) {
+                  regArray = regArrayStr;
+                }
+              } catch (e) {
+                regArray = [];
+              }
+              
+              // Remove registration ID and badge ID from array
+              var updatedRegArray = regArray.filter(function(item) {
+                var itemStr = (item || '').toString().trim();
+                return itemStr !== registrationId.toString().trim() && 
+                       itemStr !== badgeId.toString().trim();
+              });
+              
+              // Update the cell with the new array
+              sessionSheet.getRange(i + 1, regColIndex + 1).setValue(JSON.stringify(updatedRegArray));
+              break;
+            }
+          }
+        }
+      }
+    }
+    
+    return {
+      success: true,
+      message: 'Registration deleted successfully',
+      registrationId: registrationId,
+      sessionId: sessionId
+    };
   } catch (err) {
     return {
       success: false,

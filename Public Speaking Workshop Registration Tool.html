@@ -171,6 +171,19 @@
     background:rgba(255,255,255,.1);
     border-color:var(--white);
   }
+  button.secondary{
+    background:var(--white);
+    border-color:var(--border);
+    color:var(--text-dark);
+    box-shadow:0 1px 2px rgba(0,0,0,.1);
+  }
+  button.secondary:hover{
+    background:var(--bg-light);
+    border-color:var(--primary-blue);
+    color:var(--primary-blue);
+    box-shadow:0 2px 4px rgba(0,0,0,.1);
+    transform:translateY(-1px);
+  }
   button.red{
     background:var(--danger);
     border-color:var(--danger);
@@ -334,6 +347,34 @@
   .muted{
     opacity:.7;
     color:var(--text-dark);
+  }
+  .regTab{
+    position:relative;
+    margin-bottom:-2px;
+    border-radius:0;
+  }
+  .regTab.active{
+    border-bottom-color:var(--primary-yellow) !important;
+    color:var(--primary-blue) !important;
+    background:var(--white) !important;
+    border-bottom:3px solid var(--primary-yellow) !important;
+    box-shadow:0 -2px 4px rgba(0,0,0,.05);
+    z-index:1;
+  }
+  .regTab:not(.active){
+    border-bottom:3px solid transparent;
+    opacity:0.7;
+  }
+  .regTab:hover:not(.active){
+    color:var(--primary-blue);
+    background:rgba(255,255,255,.5);
+    opacity:1;
+  }
+  .regTabContent{
+    display:block;
+  }
+  .regTabContent.hidden{
+    display:none;
   }
   .panel .muted{
     color:var(--text-dark);
@@ -667,13 +708,42 @@
             <label>Badge ID<input id="regBadge" readonly/></label>
             <label>Age<input id="regAge" readonly/></label>
             </div>
-          <h3 style="margin-top:16px">Eligible Sessions</h3>
-        <div id="eligible" class="list"></div>
-        <div id="eligiblePagination" class="row" style="margin-top:12px;justify-content:center;align-items:center;gap:8px;display:none;">
-          <button id="prevPage" class="primary" style="padding:8px 16px;font-size:14px;">Previous</button>
-          <span id="pageInfo" class="caption" style="min-width:120px;text-align:center;"></span>
-          <button id="nextPage" class="primary" style="padding:8px 16px;font-size:14px;">Next</button>
-        </div>
+          
+          <!-- Tabs for Eligible and Registered Sessions -->
+          <div style="margin-top:20px">
+            <div class="row" style="border-bottom:2px solid var(--border);margin-bottom:0;background:var(--bg-light);padding:4px 4px 0 4px;border-radius:8px 8px 0 0;">
+              <button class="regTab active" data-reg-tab="eligible" style="padding:12px 24px;background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;font-weight:600;color:var(--text-dark);transition:var(--transition);border-radius:6px 6px 0 0;">
+                Eligible Sessions
+              </button>
+              <button class="regTab" data-reg-tab="registered" style="padding:12px 24px;background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;font-weight:600;color:var(--text-dark);transition:var(--transition);border-radius:6px 6px 0 0;">
+                Registered Sessions
+              </button>
+            </div>
+            
+            <!-- Eligible Sessions Tab -->
+            <div id="eligibleTab" class="regTabContent">
+              <h3 style="margin-top:0">Eligible Sessions</h3>
+              <div id="eligible" class="list"></div>
+              <div id="eligiblePagination" class="row" style="margin-top:12px;justify-content:center;align-items:center;gap:8px;display:none;">
+                <button id="prevPage" class="primary" style="padding:8px 16px;font-size:14px;">Previous</button>
+                <span id="pageInfo" class="caption" style="min-width:120px;text-align:center;"></span>
+                <button id="nextPage" class="primary" style="padding:8px 16px;font-size:14px;">Next</button>
+              </div>
+            </div>
+            
+            <!-- Registered Sessions Tab -->
+            <div id="registeredTab" class="regTabContent hidden">
+              <h3 style="margin-top:0">Your Registered Sessions</h3>
+              <div id="registeredSessions" class="list">
+                <div class="caption muted">Loading your registered sessions...</div>
+              </div>
+              <div id="registeredPagination" class="row" style="margin-top:12px;justify-content:center;align-items:center;gap:8px;display:none;">
+                <button id="regPrevPage" class="primary" style="padding:8px 16px;font-size:14px;">Previous</button>
+                <span id="regPageInfo" class="caption" style="min-width:120px;text-align:center;"></span>
+                <button id="regNextPage" class="primary" style="padding:8px 16px;font-size:14px;">Next</button>
+              </div>
+            </div>
+          </div>
           <div class="row" style="margin-top:16px;justify-content:flex-end">
             <button id="clearReg" class="primary">Clear</button>
         </div>
@@ -731,26 +801,32 @@
           <label style="min-width:160px">Capacity <input id="bulkCap" type="number" value="10" min="1"/></label>
           <label style="min-width:280px">Topic prefix <input id="bulkTopic" placeholder="Public Speaking "/></label>
         </div>
-        <div class="row" style="margin-top:8px"><button id="bulkBtn" class="primary">Generate Sundays</button></div>
+        <div class="row" style="margin-top:8px;gap:8px">
+          <button id="bulkBtn" class="primary">Generate Sundays</button>
+          <button id="bulkReset" class="primary">Reset form</button>
+        </div>
         <div id="bulkOut" class="caption" style="margin-top:6px"></div>
       </div>
 
       <div class="panel">
-        <h2>Add / edit one session</h2>
+        <h2>Add sessions</h2>
         <div class="row wrap">
           <label>Date <input id="oneDate" type="date"/></label>
           <label>Time <input id="oneTime" type="time"/></label>
           <label>Capacity <input id="oneCap" type="number" min="1" value="10"/></label>
         </div>
         <label>Topic <input id="oneTopic" placeholder="Public Speaking"/></label>
-        <div class="row" style="margin-top:8px">
+        <div class="row" style="margin-top:8px;gap:8px">
           <button id="oneAdd" class="primary">Add session</button>
-          <button id="admRefresh">Refresh list</button>
+          <button id="oneReset" class="primary">Reset form</button>
         </div>
       </div>
 
       <div class="panel" style="grid-column:1 / -1">
-        <h2>Session Management</h2>
+        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h2 style="margin:0">Session Management</h2>
+          <button id="admRefresh" class="primary" style="padding:8px 16px;font-size:14px">Refresh list</button>
+        </div>
         <div style="overflow-x:auto;margin-top:16px">
           <table id="sessionTable" style="width:100%;border-collapse:collapse;min-width:800px">
             <thead>
@@ -782,7 +858,14 @@
           <input id="lkName" placeholder="Search by name" style="min-width:200px"/>
           <button id="lkFind" class="primary">Find</button>
         </div>
-        <div id="lkOut" class="list" style="margin-top:10px"></div>
+        <div style="margin-top:16px">
+          <h3 style="margin-bottom:8px">Upcoming Registrations</h3>
+          <div id="lkOutUpcoming" class="list" style="margin-top:10px"></div>
+        </div>
+        <div style="margin-top:16px">
+          <h3 style="margin-bottom:8px">Past Registrations</h3>
+          <div id="lkOutAttended" class="list" style="margin-top:10px"></div>
+        </div>
         <div class="row" style="margin-top:8px">
           <button id="printConfirm" class="primary" disabled style="display:none">Print parent confirmation</button>
         </div>
@@ -1442,6 +1525,55 @@ function saveAllSessionsToSheets(sessions){
   });
 }
 
+function deleteRegistrationFromSheets(registrationId){
+  return new Promise(function(resolve,reject){
+    if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
+      resolve({success:true});
+      return;
+    }
+    
+    // Send JSON as text/plain to avoid CORS preflight
+    var payload = JSON.stringify({ registrationId: registrationId });
+    var action = encodeURIComponent('deleteRegistration');
+    var url = GOOGLE_SHEETS.API_URL + '?action=' + action + '&registrationId=' + encodeURIComponent(registrationId);
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: payload
+    })
+      .then(function(r){
+        if(r.status === 405){
+          throw new Error('405 Method Not Allowed: Make sure your Google Apps Script Web App is deployed (not in dev mode) and URL ends with /exec');
+        }
+        if(!r.ok){
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.text().then(function(text){
+          try {
+            return JSON.parse(text);
+          } catch(e) {
+            console.warn('Response is not JSON, treating as success');
+            return {success: true, message: text};
+          }
+        });
+      })
+      .then(function(data){
+        if(data.success){
+          resolve(data);
+        } else {
+          reject(new Error(data.error || 'Failed to delete registration'));
+        }
+      })
+      .catch(function(err){
+        console.error('deleteRegistrationFromSheets error:', err);
+        reject(err);
+      });
+  });
+}
+
 function deleteSessionFromSheets(sessionId){
   return new Promise(function(resolve,reject){
     if(!GOOGLE_SHEETS || !GOOGLE_SHEETS.API_URL){
@@ -1602,7 +1734,6 @@ function getMembersFromRegistrations(registrations) {
       }
     });
   }
-  console.log('getMembersFromRegistrations: Created map with', Object.keys(membersMap).length, 'unique members from', registrations ? registrations.length : 0, 'registrations');
   return membersMap;
 }
 
@@ -1691,7 +1822,379 @@ function selectMember(member){
   $('memberSelection').classList.add('hidden');
   $('regDetails').classList.remove('hidden');
   buildEligible();
+  buildRegisteredSessions();
 }
+
+// Tab switching for registration tabs
+function setupRegTabs(){
+  var regTabs = document.querySelectorAll('.regTab');
+  regTabs.forEach(function(tab){
+    tab.onclick = function(){
+      var tabName = tab.getAttribute('data-reg-tab');
+      // Update active tab
+      regTabs.forEach(function(t){t.classList.remove('active')});
+      tab.classList.add('active');
+      
+      // Show/hide tab content
+      $('eligibleTab').classList.toggle('hidden', tabName !== 'eligible');
+      $('registeredTab').classList.toggle('hidden', tabName !== 'registered');
+      
+      // Refresh the appropriate list when switching tabs
+      if(tabName === 'registered'){
+        buildRegisteredSessions();
+      } else if(tabName === 'eligible'){
+        // Show loading text immediately
+        var eligibleBox = $('eligible');
+        if(eligibleBox){
+          eligibleBox.innerHTML = '<div class="caption muted">Loading sessions...</div>';
+        }
+        $('eligiblePagination').style.display = 'none';
+        
+        // Reload sessions from Google Sheets to get fresh data
+        loadSessionsFromSheets().then(function(){
+          buildEligible();
+        }).catch(function(err){
+          console.error('Error loading sessions:', err);
+          buildEligible(); // Still try to build with cached data
+        });
+      }
+    };
+  });
+}
+
+// Pagination state for registered sessions
+var registeredSessionsData = {
+  allItems: [],
+  currentPage: 1,
+  itemsPerPage: 10
+};
+
+// Build registered sessions list
+function buildRegisteredSessions(){
+  if(!selectedMember){
+    $('registeredSessions').innerHTML = '<div class="muted">No member selected.</div>';
+    return;
+  }
+  
+  var badgeId = selectedMember.badgeId || '';
+  var firstName = selectedMember.firstName || '';
+  var lastName = selectedMember.lastName || '';
+  var parentEmail = $('regEmail').value.trim().toLowerCase() || '';
+  
+  var box = $('registeredSessions');
+  if(!box) return;
+  
+  // Show loader
+  box.innerHTML = '<div class="caption muted">Loading your registered sessions...</div>';
+  $('registeredPagination').style.display = 'none';
+  
+  // Get all sessions where this member is registered
+  Promise.all([
+    getSessionsFromSheets(),
+    getRegistrationsFromSheets(true)
+  ]).then(function(results){
+    var sessions = results[0] || [];
+    var registrations = results[1] || [];
+    
+    // Filter sessions where user is registered
+    var registeredSessions = sessions.filter(function(s){
+      var regIds = s.reg || [];
+      if(!Array.isArray(regIds)){
+        try {
+          regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
+        } catch(e){
+          regIds = [];
+        }
+      }
+      
+      var hasReg = false;
+      
+      // Check if badge ID is in reg array (if member has badgeId)
+      if(badgeId){
+        hasReg = regIds.indexOf(badgeId) > -1;
+      }
+      
+      // Also check via registration's sessionId and member details
+      if(!hasReg){
+        hasReg = registrations.some(function(reg){
+          var regBadgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
+          var regFirstName = (reg.firstName || reg['First Name'] || reg['firstName'] || '').toLowerCase().trim();
+          var regLastName = (reg.lastName || reg['Last Name'] || reg['lastName'] || '').toLowerCase().trim();
+          var regParentEmail = (reg.parentEmail || reg['Parent Email'] || reg['parentEmail'] || reg.email || '').toLowerCase().trim();
+          
+          // Match by badgeId if available
+          if(badgeId && regBadgeId === badgeId && (reg.sessionId === s.id || reg.sessionID === s.id)){
+            return true;
+          }
+          
+          // Match by name and parent email if no badgeId
+          if(!badgeId && firstName && lastName && parentEmail){
+            var memberFirst = firstName.toLowerCase().trim();
+            var memberLast = lastName.toLowerCase().trim();
+            if(regFirstName === memberFirst && regLastName === memberLast && regParentEmail === parentEmail && (reg.sessionId === s.id || reg.sessionID === s.id)){
+              return true;
+            }
+          }
+          
+          return false;
+        });
+      }
+      
+      return hasReg;
+    });
+    
+    // Sort by date (upcoming first)
+    registeredSessions.sort(function(a, b){
+      return new Date(a.dt) - new Date(b.dt);
+    });
+    
+    registeredSessionsData.allItems = registeredSessions;
+    registeredSessionsData.currentPage = 1;
+    renderRegisteredSessions();
+  }).catch(function(err){
+    console.error('Error loading registered sessions:', err);
+    box.innerHTML = '<div class="muted">Error loading registered sessions.</div>';
+  });
+}
+
+function renderRegisteredSessions(){
+  var box = $('registeredSessions');
+  if(!box) return;
+  
+  var list = registeredSessionsData.allItems;
+  var pagination = $('registeredPagination');
+  
+  if(!list.length){
+    box.innerHTML = '<div class="muted">No registered sessions found.</div>';
+    if(pagination) pagination.style.display = 'none';
+    return;
+  }
+  
+  // Pagination logic
+  var currentPage = registeredSessionsData.currentPage;
+  var itemsPerPage = registeredSessionsData.itemsPerPage;
+  var totalPages = Math.ceil(list.length / itemsPerPage);
+  var startIndex = (currentPage - 1) * itemsPerPage;
+  var endIndex = Math.min(startIndex + itemsPerPage, list.length);
+  var pageItems = list.slice(startIndex, endIndex);
+  
+  box.innerHTML = '';
+  
+  pageItems.forEach(function(s){
+    var row = document.createElement('div');
+    row.className = 'item';
+    
+    var dt = new Date(s.dt);
+    var dateStr = dt.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+    var timeStr = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    
+    // Check if session is in the past
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    var sessionDateOnly = new Date(dt);
+    sessionDateOnly.setHours(0, 0, 0, 0);
+    var isPast = sessionDateOnly < today;
+    
+    // Apply gray styling to past sessions
+    if(isPast){
+      row.style.opacity = '0.6';
+    }
+    
+    row.innerHTML = '<div><div style="font-weight:600">' + title(s) + '</div><div class="caption muted">Registered' + (isPast ? ' (Past)' : '') + '</div></div>';
+    
+    var delBtn = document.createElement('button');
+    delBtn.className = 'red';
+    delBtn.textContent = 'Cancel Registration';
+    
+    // Disable and gray out delete button for past sessions
+    if(isPast){
+      delBtn.disabled = true;
+      delBtn.style.opacity = '0.5';
+      delBtn.style.cursor = 'not-allowed';
+      delBtn.style.pointerEvents = 'none';
+    } else {
+      delBtn.onclick = function(){
+      if(!confirm('Are you sure you want to cancel this registration?')) return;
+      
+      // Show loader on button
+      var originalText = delBtn.textContent;
+      delBtn.disabled = true;
+      delBtn.textContent = 'Cancelling...';
+      delBtn.style.opacity = '0.7';
+      delBtn.style.cursor = 'not-allowed';
+      
+      // Find the registration
+      Promise.all([
+        getSessionsFromSheets(),
+        getRegistrationsFromSheets(true)
+      ]).then(function(results){
+        var sessions = results[0] || [];
+        var registrations = results[1] || [];
+        
+        // Find registration for this session and member
+        var registration = registrations.find(function(reg){
+          var regBadgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
+          var regFirstName = (reg.firstName || reg['First Name'] || reg['firstName'] || '').toLowerCase().trim();
+          var regLastName = (reg.lastName || reg['Last Name'] || reg['lastName'] || '').toLowerCase().trim();
+          var regParentEmail = (reg.parentEmail || reg['Parent Email'] || reg['parentEmail'] || reg.email || '').toLowerCase().trim();
+          
+          var memberBadgeId = selectedMember.badgeId || '';
+          var memberFirstName = (selectedMember.firstName || '').toLowerCase().trim();
+          var memberLastName = (selectedMember.lastName || '').toLowerCase().trim();
+          var memberParentEmail = parentEmail;
+          
+          // Match by badgeId if both have it
+          if(memberBadgeId && regBadgeId === memberBadgeId && (reg.sessionId === s.id || reg.sessionID === s.id)){
+            return true;
+          }
+          
+          // Match by name and parent email if no badgeId
+          if(!memberBadgeId && memberFirstName && memberLastName && memberParentEmail){
+            if(regFirstName === memberFirstName && regLastName === memberLastName && regParentEmail === memberParentEmail && (reg.sessionId === s.id || reg.sessionID === s.id)){
+              return true;
+            }
+          }
+          
+          return false;
+        });
+        
+        if(registration && registration.id){
+          // Delete registration from sheet
+          deleteRegistrationFromSheets(registration.id).then(function(){
+            // Remove from session reg array
+            var regIds = s.reg || [];
+            if(!Array.isArray(regIds)){
+              try {
+                regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
+              } catch(e){
+                regIds = [];
+              }
+            }
+            
+            var memberBadgeId = selectedMember.badgeId || '';
+            s.reg = regIds.filter(function(regId){
+              return regId !== memberBadgeId && regId !== registration.id;
+            });
+            
+            return saveSessionToSheets(s);
+          }).then(function(){
+            showToast('Registration cancelled');
+            // Refresh both lists - keep button in loading state until lists refresh
+            // The button will be removed when the list re-renders
+            var refreshPromise = Promise.all([
+              getSessionsFromSheets(),
+              getRegistrationsFromSheets(true)
+            ]).then(function(){
+              buildRegisteredSessions();
+              buildEligible();
+            });
+            return refreshPromise;
+          }).then(function(){
+            // Lists have been refreshed - button is now removed from DOM
+            // No need to restore button state as it's been replaced
+          }).catch(function(err){
+            console.error('Error cancelling registration:', err);
+            alert('Error cancelling registration: ' + (err.message || 'Unknown error'));
+            // Restore button state on error
+            delBtn.disabled = false;
+            delBtn.textContent = originalText;
+            delBtn.style.opacity = '1';
+            delBtn.style.cursor = 'pointer';
+          });
+        } else {
+          // Fallback: just remove from session reg array
+          var regIds = s.reg || [];
+          if(!Array.isArray(regIds)){
+            try {
+              regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
+            } catch(e){
+              regIds = [];
+            }
+          }
+          
+          var memberBadgeId = selectedMember.badgeId || '';
+          s.reg = regIds.filter(function(regId){return regId !== memberBadgeId});
+          
+          saveSessionToSheets(s).then(function(){
+            showToast('Registration cancelled');
+            // Refresh both lists - keep button in loading state until lists refresh
+            // The button will be removed when the list re-renders
+            var refreshPromise = Promise.all([
+              getSessionsFromSheets(),
+              getRegistrationsFromSheets(true)
+            ]).then(function(){
+              buildRegisteredSessions();
+              buildEligible();
+            });
+            return refreshPromise;
+          }).then(function(){
+            // Lists have been refreshed - button is now removed from DOM
+            // No need to restore button state as it's been replaced
+          }).catch(function(err){
+            console.error('Error cancelling registration:', err);
+            alert('Error cancelling registration: ' + (err.message || 'Unknown error'));
+            // Restore button state on error
+            delBtn.disabled = false;
+            delBtn.textContent = originalText;
+            delBtn.style.opacity = '1';
+            delBtn.style.cursor = 'pointer';
+          });
+        }
+      });
+      };
+    }
+    
+    row.appendChild(delBtn);
+    box.appendChild(row);
+  });
+  
+  // Update pagination controls
+  if(totalPages > 1 && pagination){
+    pagination.style.display = 'flex';
+    $('regPageInfo').textContent = 'Page ' + currentPage + ' of ' + totalPages + ' (' + list.length + ' total)';
+    $('regPrevPage').disabled = currentPage === 1;
+    $('regNextPage').disabled = currentPage === totalPages;
+    
+    // Style disabled buttons
+    if(currentPage === 1){
+      $('regPrevPage').style.opacity = '0.5';
+      $('regPrevPage').style.cursor = 'not-allowed';
+      $('regPrevPage').style.pointerEvents = 'none';
+    } else {
+      $('regPrevPage').style.opacity = '1';
+      $('regPrevPage').style.cursor = 'pointer';
+      $('regPrevPage').style.pointerEvents = 'auto';
+    }
+    
+    if(currentPage === totalPages){
+      $('regNextPage').style.opacity = '0.5';
+      $('regNextPage').style.cursor = 'not-allowed';
+      $('regNextPage').style.pointerEvents = 'none';
+    } else {
+      $('regNextPage').style.opacity = '1';
+      $('regNextPage').style.cursor = 'pointer';
+      $('regNextPage').style.pointerEvents = 'auto';
+    }
+  } else if(pagination){
+    pagination.style.display = 'none';
+  }
+}
+
+// Registered sessions pagination handlers
+$('regPrevPage').onclick = function(){
+  if(registeredSessionsData.currentPage > 1){
+    registeredSessionsData.currentPage--;
+    renderRegisteredSessions();
+  }
+};
+
+$('regNextPage').onclick = function(){
+  var totalPages = Math.ceil(registeredSessionsData.allItems.length / registeredSessionsData.itemsPerPage);
+  if(registeredSessionsData.currentPage < totalPages){
+    registeredSessionsData.currentPage++;
+    renderRegisteredSessions();
+  }
+};
 
 // Pagination state for eligible sessions
 var eligibleSessionsData = {
@@ -2026,8 +2529,9 @@ function proceedWithRegistration(session, member, email){
     showSuccess('Registration Successful!');
     showToast('Registration saved to Google Sheets');
     
-    // Refresh eligible sessions
+    // Refresh eligible sessions and registered sessions
     buildEligible();
+    buildRegisteredSessions();
     
     // Re-enable buttons
     registerBtns.forEach(function(btn){ 
@@ -2058,15 +2562,17 @@ var manPickEl = $('manPick');
 if(manPickEl){
   manPickEl.onclick=function(){secure(function(){pickSession(function(sel){$('manChoice').dataset.sid=sel?sel.id:'';$('manChoice').textContent=sel?('Chosen: '+title(sel)):'None'})})}
 }
-$('manReg').onclick=function(){
-  secure(function(){
-    var badge=$('manBadge').value.trim();
-    var first=$('manFirst').value.trim();
-    var last=$('manLast').value.trim();
-    var phone=$('manPhone').value.trim();
-    var email=$('manEmail').value.trim();
-    var sid=$('manChoice').dataset.sid;
-    if(!badge||!sid){alert('Badge and session required');return}
+var manRegEl = $('manReg');
+if(manRegEl){
+  manRegEl.onclick=function(){
+    secure(function(){
+      var badge=$('manBadge').value.trim();
+      var first=$('manFirst').value.trim();
+      var last=$('manLast').value.trim();
+      var phone=$('manPhone').value.trim();
+      var email=$('manEmail').value.trim();
+      var sid=$('manChoice').dataset.sid;
+      if(!badge||!sid){alert('Badge and session required');return}
     var s=sessionsCache.find(function(x){return x.id===sid});
     if(!s){alert('Session missing');return}
     if(registeredForMonth(badge,s.dt)){alert('Already has a session this month');return}
@@ -2168,6 +2674,7 @@ $('manReg').onclick=function(){
       });
     });
   });
+  }
 }
 function registeredForMonth(badge,when){return sessionsCache.some(function(s){return (s.reg||[]).indexOf(badge)>-1 && sameMonth(s.dt,when)})}
 /**
@@ -4022,6 +4529,33 @@ function refreshAdminList(resetPage){
   var list = sessionsCache;
   var pagination = $('adminPagination');
   
+  // Sort sessions: upcoming dates first (ascending), then past dates (descending)
+  var now = new Date();
+  var upcomingSessions = [];
+  var pastSessions = [];
+  
+  list.forEach(function(s){
+    var sessionDate = new Date(s.dt);
+    if(sessionDate >= now){
+      upcomingSessions.push(s);
+    } else {
+      pastSessions.push(s);
+    }
+  });
+  
+  // Sort upcoming by date ascending (earliest first)
+  upcomingSessions.sort(function(a, b){
+    return new Date(a.dt) - new Date(b.dt);
+  });
+  
+  // Sort past by date descending (most recent past first)
+  pastSessions.sort(function(a, b){
+    return new Date(b.dt) - new Date(a.dt);
+  });
+  
+  // Combine: upcoming first, then past
+  list = upcomingSessions.concat(pastSessions);
+  
   // Ensure current page is valid
   var totalPages = Math.ceil(list.length / adminSessionsData.itemsPerPage);
   if(adminSessionsData.currentPage > totalPages && totalPages > 0){
@@ -4054,55 +4588,69 @@ function refreshAdminList(resetPage){
     var dateStr = dt.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'});
     var timeStr = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     
+    // Check if session is in the past
+    var isPast = dt < now;
+    var textColor = isPast ? '#999999' : 'var(--text-dark)';
+    var rowOpacity = isPast ? '0.6' : '1';
+    
     var regCount = (s.reg && s.reg.length) || 0;
     var attCount = (s.att && s.att.length) || 0;
     
+    row.style.opacity = rowOpacity;
+    
     row.innerHTML = 
-      '<td style="padding:12px;color:var(--text-dark)">' + dateStr + '</td>' +
-      '<td style="padding:12px;color:var(--text-dark)">' + timeStr + '</td>' +
-      '<td style="padding:12px;color:var(--text-dark)">' + (s.topic || 'Public Speaking') + '</td>' +
-      '<td style="padding:12px;text-align:center;color:var(--text-dark)">' + (s.capacity || 10) + '</td>' +
-      '<td style="padding:12px;text-align:center;color:var(--text-dark)">' + regCount + '</td>' +
-      '<td style="padding:12px;text-align:center;color:var(--text-dark)">' + attCount + '</td>' +
+      '<td style="padding:12px;color:' + textColor + '">' + dateStr + '</td>' +
+      '<td style="padding:12px;color:' + textColor + '">' + timeStr + '</td>' +
+      '<td style="padding:12px;color:' + textColor + '">' + (s.topic || 'Public Speaking') + '</td>' +
+      '<td style="padding:12px;text-align:center;color:' + textColor + '">' + (s.capacity || 10) + '</td>' +
+      '<td style="padding:12px;text-align:center;color:' + textColor + '">' + regCount + '</td>' +
+      '<td style="padding:12px;text-align:center;color:' + textColor + '">' + attCount + '</td>' +
       '<td style="padding:12px;text-align:center">' +
         '<div class="row" style="gap:8px;justify-content:center">' +
-          '<button class="editSessionBtn" data-id="' + s.id + '" style="padding:6px 12px;font-size:13px">Edit</button>' +
-          '<button class="deleteSessionBtn red" data-id="' + s.id + '" style="padding:6px 12px;font-size:13px">Delete</button>' +
+          '<button class="editSessionBtn" data-id="' + s.id + '" style="padding:6px 12px;font-size:13px' + (isPast ? ';opacity:0.5;cursor:not-allowed;pointer-events:none' : '') + '">Edit</button>' +
+          '<button class="deleteSessionBtn red" data-id="' + s.id + '" style="padding:6px 12px;font-size:13px' + (isPast ? ';opacity:0.5;cursor:not-allowed;pointer-events:none' : '') + '">Delete</button>' +
         '</div>' +
       '</td>';
     
-    row.addEventListener('mouseenter', function(){ this.style.background = 'var(--bg-light)'; });
-    row.addEventListener('mouseleave', function(){ this.style.background = ''; });
+    // Only add hover effect for upcoming sessions
+    if(!isPast){
+      row.addEventListener('mouseenter', function(){ this.style.background = 'var(--bg-light)'; });
+      row.addEventListener('mouseleave', function(){ this.style.background = ''; });
+    }
     
     var editBtn = row.querySelector('.editSessionBtn');
-    editBtn.onclick = function(){
-      if(!adminUnlocked){ alert('Reopen Admin to unlock'); return; }
-      editSession(s);
-    };
+    if(!isPast){
+      editBtn.onclick = function(){
+        if(!adminUnlocked){ alert('Reopen Admin to unlock'); return; }
+        editSession(s);
+      };
+    }
     
     var deleteBtn = row.querySelector('.deleteSessionBtn');
-    deleteBtn.onclick = function(){
-      if(!adminUnlocked){ alert('Reopen Admin to unlock'); return; }
-      if(confirm('Delete this session? This will also delete all registrations for this session. This cannot be undone.')){
-        // Delete from Google Sheets only (no local storage)
-        deleteSessionFromSheets(s.id).then(function(response){
-          // Update in-memory cache after successful delete from Google Sheets
-          sessionsCache = sessionsCache.filter(function(sess){return sess.id!==s.id});
-          refreshAdminList(true);
-          refreshAttendance();
-          
-          // Show message with registration deletion count
-          var message = response.message || 'Session deleted from Google Sheets';
-          if(response.deletedRegistrations !== undefined && response.deletedRegistrations > 0){
-            message = 'Session and ' + response.deletedRegistrations + ' registration(s) deleted';
-          }
-          showToast(message);
-        }).catch(function(err){
-          console.error('Error deleting session from Google Sheets:', err);
-          showToast('Error deleting session: ' + (err.message || 'Unknown error'));
-        });
-      }
-    };
+    if(!isPast){
+      deleteBtn.onclick = function(){
+        if(!adminUnlocked){ alert('Reopen Admin to unlock'); return; }
+        if(confirm('Delete this session? This will also delete all registrations for this session. This cannot be undone.')){
+          // Delete from Google Sheets only (no local storage)
+          deleteSessionFromSheets(s.id).then(function(response){
+            // Update in-memory cache after successful delete from Google Sheets
+            sessionsCache = sessionsCache.filter(function(sess){return sess.id!==s.id});
+            refreshAdminList(true);
+            refreshAttendance();
+            
+            // Show message with registration deletion count
+            var message = response.message || 'Session deleted from Google Sheets';
+            if(response.deletedRegistrations !== undefined && response.deletedRegistrations > 0){
+              message = 'Session and ' + response.deletedRegistrations + ' registration(s) deleted';
+            }
+            showToast(message);
+          }).catch(function(err){
+            console.error('Error deleting session from Google Sheets:', err);
+            showToast('Error deleting session: ' + (err.message || 'Unknown error'));
+          });
+        }
+      };
+    }
     
     tbody.appendChild(row);
   });
@@ -4139,25 +4687,8 @@ function refreshAdminList(resetPage){
   }
 }
 
-// Admin pagination event handlers
-$('adminPrevPage').onclick = function(){
-  if(adminSessionsData.currentPage > 1){
-    adminSessionsData.currentPage--;
-    refreshAdminList();
-    // Scroll to top of table
-    $('sessionTable').scrollIntoView({behavior: 'smooth', block: 'start'});
-  }
-};
-
-$('adminNextPage').onclick = function(){
-  var totalPages = Math.ceil(sessionsCache.length / adminSessionsData.itemsPerPage);
-  if(adminSessionsData.currentPage < totalPages){
-    adminSessionsData.currentPage++;
-    refreshAdminList();
-    // Scroll to top of table
-    $('sessionTable').scrollIntoView({behavior: 'smooth', block: 'start'});
-  }
-};
+// Admin pagination event handlers - now handled in setupAdminButtons() function
+// Removed to prevent conflicts and ensure proper initialization
 
 function editSession(s){
   // Create edit modal
@@ -4595,6 +5126,42 @@ function setupAdminButtons(){
     console.error('oneAdd button not found');
   }
   
+  // Reset bulk form button
+  var bulkResetBtn = $('bulkReset');
+  if(bulkResetBtn){
+    var newBulkResetBtn = bulkResetBtn.cloneNode(true);
+    bulkResetBtn.parentNode.replaceChild(newBulkResetBtn, bulkResetBtn);
+    bulkResetBtn = newBulkResetBtn;
+    
+    bulkResetBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      $('bulkMonth').value = '';
+      $('timeA').value = '10:00';
+      $('timeB').value = '13:00';
+      $('bulkCap').value = '10';
+      $('bulkTopic').value = '';
+      $('bulkOut').textContent = '';
+    };
+  }
+  
+  // Reset add session form button
+  var oneResetBtn = $('oneReset');
+  if(oneResetBtn){
+    var newOneResetBtn = oneResetBtn.cloneNode(true);
+    oneResetBtn.parentNode.replaceChild(newOneResetBtn, oneResetBtn);
+    oneResetBtn = newOneResetBtn;
+    
+    oneResetBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      $('oneDate').value = '';
+      $('oneTime').value = '';
+      $('oneCap').value = '10';
+      $('oneTopic').value = '';
+    };
+  }
+  
   // Refresh list button
   var admRefreshBtn = $('admRefresh');
   if(admRefreshBtn){
@@ -4632,12 +5199,12 @@ function setupAdminButtons(){
     lkFindBtn.parentNode.replaceChild(newLkFindBtn, lkFindBtn);
     lkFindBtn = newLkFindBtn;
     lkFindBtn.onclick = function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('Member lookup button clicked');
+      if(e){
+        e.preventDefault();
+        e.stopPropagation();
+      }
       if(!adminUnlocked){alert('Open Admin with password first');return}
       var nameQ=$('lkName').value.trim().toLowerCase();
-      var out=$('lkOut');
       var printBtn = $('printConfirm');
       
       if(!nameQ){
@@ -4650,19 +5217,17 @@ function setupAdminButtons(){
         printBtn.style.display = 'none';
         printBtn.disabled = true;
       }
-      out.innerHTML='<div class="caption muted">Loading data from Google Sheets...</div>';
+      $('lkOutUpcoming').innerHTML='<div class="caption muted">Loading data from Google Sheets...</div>';
+      $('lkOutAttended').innerHTML='';
       
       // Fetch data from Google Sheets
-      console.log('Fetching data from Google Sheets...');
       Promise.all([
         getSessionsFromSheets(),
         getRegistrationsFromSheets(true)
       ]).then(function(results){
-        console.log('Data fetched - Sessions:', results[0] ? results[0].length : 0, 'Registrations:', results[1] ? results[1].length : 0);
         var sessions = results[0] || [];
         var registrations = results[1] || [];
         var membersMap = getMembersFromRegistrations(registrations);
-        console.log('Members map created with', Object.keys(membersMap).length, 'members');
         
         // Refresh sessionsCache
         sessionsCache = sessions;
@@ -4675,48 +5240,91 @@ function setupAdminButtons(){
         Object.keys(membersMap).forEach(function(regId){
           var member = membersMap[regId];
           var fullName = (member.first + ' ' + member.last).trim().toLowerCase();
-          if(fullName.indexOf(nameQ) > -1 || member.name.toLowerCase().indexOf(nameQ) > -1){
+          var memberName = (member.name || '').toLowerCase();
+          if(fullName.indexOf(nameQ) > -1 || (memberName && memberName.indexOf(nameQ) > -1)){
             matchingRegIds.push(regId);
           }
         });
         
         if(matchingRegIds.length === 0){
-          out.innerHTML='<div class="muted">No members found with that name.</div>';
+          $('lkOutUpcoming').innerHTML='<div class="muted">No Data</div>';
+          $('lkOutAttended').innerHTML='';
           if(printBtn) printBtn.style.display = 'none';
           return;
         }
         
         chosen = matchingRegIds[0]; // Use registration ID as chosen
+        
+        // Get badge IDs for matching registrations
+        var matchingBadgeIds = [];
+        matchingRegIds.forEach(function(regId){
+          var reg = registrations.find(function(r){return r.id === regId});
+          if(reg){
+            var badgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
+            if(badgeId) matchingBadgeIds.push(badgeId);
+          }
+        });
+        
         results = sessions.filter(function(s){
           var regIds = (s.reg || []);
+          if(!Array.isArray(regIds)){
+            try {
+              regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
+            } catch(e){
+              regIds = [];
+            }
+          }
+          
           var hasReg = regIds.some(function(regId){
             // Check if this registration ID matches any of our matching registrations
             return matchingRegIds.indexOf(regId) > -1;
           });
-          // For attendance, check if badge matches any of the matching registrations' badgeIds
-          var hasAtt = (s.att || []).some(function(a){
-            return matchingRegIds.some(function(regId){
+          
+          // Alternative: Check if any matching registration references this session by sessionId
+          if(!hasReg){
+            hasReg = matchingRegIds.some(function(regId){
               var reg = registrations.find(function(r){return r.id === regId});
-              return reg && reg.badgeId && reg.badgeId === a.badge;
+              return reg && (reg.sessionId === s.id || reg.sessionID === s.id);
             });
+          }
+          
+          // For attendance, check if badge matches any of the matching registrations' badgeIds
+          var attArray = s.att || [];
+          if(!Array.isArray(attArray)){
+            try {
+              attArray = typeof attArray === 'string' ? JSON.parse(attArray) : [];
+            } catch(e){
+              attArray = [];
+            }
+          }
+          
+          var hasAtt = attArray.some(function(a){
+            var badge = a.badge || a.badgeId || '';
+            return matchingBadgeIds.indexOf(badge) > -1;
           });
+          
           return hasReg || hasAtt;
         });
         
         if(!chosen){
-          out.innerHTML='<div class="muted">No member found.</div>';
+          $('lkOutUpcoming').innerHTML='<div class="muted">No member found.</div>';
+          $('lkOutAttended').innerHTML='';
           if(printBtn) printBtn.style.display = 'none';
           return;
         }
         
         if(!results.length){
-          out.innerHTML='<div class="muted">No records found.</div>';
+          $('lkOutUpcoming').innerHTML='<div class="muted">No records found.</div>';
+          $('lkOutAttended').innerHTML='';
           if(printBtn) printBtn.style.display = 'none';
           return;
         }
         
         // Clear loading message and prepare to show results
-        out.innerHTML='';
+        var upcomingOut = $('lkOutUpcoming');
+        var attendedOut = $('lkOutAttended');
+        upcomingOut.innerHTML='';
+        attendedOut.innerHTML='';
         
         // Show and enable print button after we have results
         if(printBtn){
@@ -4725,55 +5333,194 @@ function setupAdminButtons(){
           printBtn.onclick = function(){printConfirm(chosen, registrations)};
         }
         
-        results.sort(function(a,b){return new Date(a.dt)-new Date(b.dt)}).forEach(function(s){
+        var now = new Date();
+        var upcomingSessions = [];
+        var attendedSessions = [];
+        
+        
+        // Separate sessions into upcoming and attended
+        results.forEach(function(s){
+          var sessionDate = new Date(s.dt);
           var regIds = (s.reg || []);
-          // Find matching registration - handle both registration IDs and badge IDs
+          if(!Array.isArray(regIds)){
+            try {
+              regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
+            } catch(e){
+              regIds = [];
+            }
+          }
+          
           var matchingReg = null;
           var regIdToRemove = null;
           
-          // chosen is now a registration ID (from membersMap key)
-          // Check if reg array contains this registration ID
-          if(regIds.indexOf(chosen) > -1){
-            matchingReg = registrations.find(function(r){return r.id === chosen});
-            regIdToRemove = chosen;
-          } else {
-            // Registration ID not found in session's reg array
-            matchingReg = null;
+          // Check if reg array contains ANY of the matching registration IDs OR badge IDs
+          var foundRegId = null;
+          for(var i = 0; i < matchingRegIds.length; i++){
+            var regId = matchingRegIds[i];
+            var reg = registrations.find(function(r){return r.id === regId});
+            var badgeId = reg ? (reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '') : '';
+            
+            // Check if registration ID is in reg array
+            if(regIds.indexOf(regId) > -1){
+              foundRegId = regId;
+              matchingReg = reg;
+              regIdToRemove = regId;
+              break;
+            }
+            // Check if badge ID is in reg array (some sessions store badge IDs instead)
+            if(badgeId && regIds.indexOf(badgeId) > -1){
+              foundRegId = regId;
+              matchingReg = reg;
+              regIdToRemove = badgeId; // Store badge ID for removal
+              break;
+            }
+            // Check if registration's sessionId matches this session
+            if(reg && (reg.sessionId === s.id || reg.sessionID === s.id)){
+              foundRegId = regId;
+              matchingReg = reg;
+              regIdToRemove = badgeId || regId; // Use badge ID if available, otherwise reg ID
+              break;
+            }
           }
           
-          var hasReg = !!matchingReg || regIds.indexOf(chosen) > -1;
-          var hasAtt = (s.att || []).some(function(a){return a.badge === chosen});
-          var who = matchingReg && matchingReg.registeredBy ? (' • registered by ' + matchingReg.registeredBy) : '';
+          // hasReg is true if we found a matching registration (via any method)
+          var hasReg = !!matchingReg;
+          var attArray = s.att || [];
+          if(!Array.isArray(attArray)){
+            try {
+              attArray = typeof attArray === 'string' ? JSON.parse(attArray) : [];
+            } catch(e){
+              attArray = [];
+            }
+          }
           
-          var row=document.createElement('div');
-          row.className='item';
-          row.innerHTML='<div><div>'+title(s)+'</div><div class="caption">'+(hasReg?'Registered':'')+' '+(hasAtt?'• Attended':'')+who+'</div></div>';
-          var del=document.createElement('button');
-          del.textContent='Delete registration';
-          del.className='red';
-          del.onclick=function(){
-            if(!hasReg){alert('No registration to delete');return}
-            if(!confirm('Remove this registration?')) return;
-            // Remove registration ID or badge ID from session reg array
-            s.reg = regIds.filter(function(regId){return regId !== regIdToRemove});
-            saveSessionToSheets(s).then(function(){
-              row.remove();
-              showToast('Removed');
-              // Refresh sessions cache
-              return getSessionsFromSheets();
-            }).then(function(sessions){
-              sessionsCache = sessions;
-            }).catch(function(err){
-              console.error('Error removing registration:', err);
-              alert('Error removing registration: ' + (err.message || 'Unknown error'));
+          var hasAtt = attArray.some(function(a){
+            // Check if any matching registration has this badge
+            return matchingRegIds.some(function(regId){
+              var reg = registrations.find(function(r){return r.id === regId});
+              var badgeId = reg ? (reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '') : '';
+              return badgeId && badgeId === (a.badge || a.badgeId || '');
             });
-          };
-          row.appendChild(del);
-          out.appendChild(row);
+          });
+          
+          // Compare dates properly (set time to 0 for date-only comparison)
+          var today = new Date();
+          today.setHours(0, 0, 0, 0);
+          var sessionDateOnly = new Date(sessionDate);
+          sessionDateOnly.setHours(0, 0, 0, 0);
+          
+          // If session is today or in the future and user is registered, it's upcoming
+          if(sessionDateOnly >= today && hasReg){
+            upcomingSessions.push({session: s, matchingReg: matchingReg, regIdToRemove: regIdToRemove, hasReg: hasReg, hasAtt: hasAtt});
+          }
+          // If session is before today and user attended or was registered, it's attended
+          if(sessionDateOnly < today && (hasAtt || hasReg)){
+            attendedSessions.push({session: s, matchingReg: matchingReg, regIdToRemove: regIdToRemove, hasReg: hasReg, hasAtt: hasAtt});
+          }
         });
+        
+        // Sort upcoming by date ascending
+        upcomingSessions.sort(function(a,b){return new Date(a.session.dt) - new Date(b.session.dt)});
+        
+        // Sort attended by date descending (most recent first)
+        attendedSessions.sort(function(a,b){return new Date(b.session.dt) - new Date(a.session.dt)});
+        
+        // Render upcoming registrations with delete option
+        if(upcomingSessions.length === 0){
+          upcomingOut.innerHTML='<div class="muted">No upcoming registrations.</div>';
+        } else {
+          upcomingSessions.forEach(function(item){
+            var s = item.session;
+            var matchingReg = item.matchingReg;
+            var regIdToRemove = item.regIdToRemove;
+            var hasReg = item.hasReg;
+            var who = matchingReg && matchingReg.registeredBy ? (' • registered by ' + matchingReg.registeredBy) : '';
+            
+            var row=document.createElement('div');
+            row.className='item';
+            row.innerHTML='<div><div>'+title(s)+'</div><div class="caption">Registered'+who+'</div></div>';
+            var del=document.createElement('button');
+            del.textContent='Delete registration';
+            del.className='red';
+            del.onclick=function(){
+              if(!hasReg){alert('No registration to delete');return}
+              if(!confirm('Remove this registration? This will delete the registration and remove it from the session.')) return;
+              
+              var registrationId = matchingReg ? matchingReg.id : null;
+              if(!registrationId){
+                alert('Registration ID not found');
+                return;
+              }
+              
+              // Step 1: Delete registration from registration sheet
+              deleteRegistrationFromSheets(registrationId).then(function(deleteResult){
+                // Step 2: Remove registration ID/badge ID from session reg array
+                var regIds = (s.reg || []);
+                if(!Array.isArray(regIds)){
+                  try {
+                    regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
+                  } catch(e){
+                    regIds = [];
+                  }
+                }
+                
+                // Remove both registration ID and badge ID if present
+                var badgeId = matchingReg ? (matchingReg.badgeId || matchingReg['Badge ID'] || matchingReg['badgeId'] || '') : '';
+                s.reg = regIds.filter(function(regId){
+                  return regId !== regIdToRemove && regId !== registrationId && regId !== badgeId;
+                });
+                
+                // Step 3: Save updated session
+                return saveSessionToSheets(s);
+              }).then(function(){
+                row.remove();
+                showToast('Registration deleted and removed from session');
+                // Refresh sessions cache
+                return getSessionsFromSheets();
+              }).then(function(sessions){
+                sessionsCache = sessions;
+                // Refresh the display
+                lkFindBtn.onclick();
+              }).catch(function(err){
+                console.error('Error removing registration:', err);
+                alert('Error removing registration: ' + (err.message || 'Unknown error'));
+              });
+            };
+            row.appendChild(del);
+            upcomingOut.appendChild(row);
+          });
+        }
+        
+        // Render attended sessions without delete option
+        if(attendedSessions.length === 0){
+          attendedOut.innerHTML='<div class="muted">No attended sessions.</div>';
+        } else {
+          attendedSessions.forEach(function(item){
+            var s = item.session;
+            var matchingReg = item.matchingReg;
+            var hasReg = item.hasReg;
+            var hasAtt = item.hasAtt;
+            var who = matchingReg && matchingReg.registeredBy ? (' • registered by ' + matchingReg.registeredBy) : '';
+            var statusText = '';
+            if(hasAtt && hasReg){
+              statusText = 'Registered • Attended';
+            } else if(hasAtt){
+              statusText = 'Attended';
+            } else if(hasReg){
+              statusText = 'Registered';
+            }
+            
+            var row=document.createElement('div');
+            row.className='item';
+            row.style.opacity = '0.7';
+            row.innerHTML='<div><div>'+title(s)+'</div><div class="caption">'+statusText+who+'</div></div>';
+            attendedOut.appendChild(row);
+          });
+        }
       }).catch(function(err){
         console.error('Error loading data:', err);
-        out.innerHTML='<div class="muted">Error loading data from Google Sheets: ' + (err.message || 'Unknown error') + '</div>';
+        $('lkOutUpcoming').innerHTML='<div class="muted">Error loading data from Google Sheets: ' + (err.message || 'Unknown error') + '</div>';
+        $('lkOutAttended').innerHTML='';
         if(printBtn) printBtn.style.display = 'none';
       });
     };
@@ -4964,6 +5711,48 @@ function setupAdminButtons(){
     };
   }
   
+  // Admin pagination buttons
+  var adminPrevBtn = $('adminPrevPage');
+  if(adminPrevBtn){
+    // Remove any existing handlers by cloning and replacing
+    var newAdminPrevBtn = adminPrevBtn.cloneNode(true);
+    adminPrevBtn.parentNode.replaceChild(newAdminPrevBtn, adminPrevBtn);
+    adminPrevBtn = newAdminPrevBtn;
+    
+    adminPrevBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(adminSessionsData.currentPage > 1){
+        adminSessionsData.currentPage--;
+        refreshAdminList();
+        // Scroll to top of table
+        var table = $('sessionTable');
+        if(table) table.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+    };
+  }
+  
+  var adminNextBtn = $('adminNextPage');
+  if(adminNextBtn){
+    // Remove any existing handlers by cloning and replacing
+    var newAdminNextBtn = adminNextBtn.cloneNode(true);
+    adminNextBtn.parentNode.replaceChild(newAdminNextBtn, adminNextBtn);
+    adminNextBtn = newAdminNextBtn;
+    
+    adminNextBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      var totalPages = Math.ceil(sessionsCache.length / adminSessionsData.itemsPerPage);
+      if(adminSessionsData.currentPage < totalPages){
+        adminSessionsData.currentPage++;
+        refreshAdminList();
+        // Scroll to top of table
+        var table = $('sessionTable');
+        if(table) table.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+    };
+  }
+  
 }
 
 // Setup buttons when DOM is ready
@@ -4974,13 +5763,7 @@ if(document.readyState === 'loading'){
   setupAdminButtons();
 }
 
-// Verify buttons exist
-console.log('Button check:', {
-  lkFind: !!$('lkFind'),
-  expReg: !!$('expReg'),
-  expAtt: !!$('expAtt'),
-  backupBtn: !!$('backupBtn'),
-});
+
 // Duplicate export handlers removed - now handled in setupAdminButtons
 function download(name,text,type){var blob=new Blob([text],{type:type||'text/plain'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(function(){URL.revokeObjectURL(url)},1000)}
 // Duplicate backup handler removed - now handled in setupAdminButtons
@@ -5081,6 +5864,9 @@ function printConfirm(regIdOrBadge, registrations){
   });
 }
 $('startScanAtt').disabled=false;$('stopScanAtt').disabled=false
+
+// Initialize registration tabs
+setupRegTabs();
 })();
 </script>
 </body>
