@@ -1869,6 +1869,92 @@ var registeredSessionsData = {
   itemsPerPage: 10
 };
 
+function getRegistrationRecordId(reg){
+  if(!reg) return '';
+  return String(reg.id || reg['ID'] || reg['Registration ID'] || reg['registrationId'] || '').trim();
+}
+
+function normalizeSessionRegIds(s){
+  var regIds = (s && s.reg) || [];
+  if(!Array.isArray(regIds)){
+    try {
+      regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
+    } catch(e){
+      regIds = [];
+    }
+  }
+  return regIds;
+}
+
+/**
+ * Find the registrations-sheet row for this member + session (aligned with how we show "registered",
+ * including name/email match when the row has no badge yet, and reg[] holding a registration id).
+ */
+function findRegistrationRowForSession(s, member, parentEmail, registrations){
+  if(!s || !member || !registrations || !registrations.length) return null;
+  var badgeId = String(member.badgeId || '').trim();
+  var firstName = (member.firstName || '').toLowerCase().trim();
+  var lastName = (member.lastName || '').toLowerCase().trim();
+  var email = (parentEmail || '').toLowerCase().trim();
+  var sid = s.id;
+
+  function sessionMatches(reg){
+    return reg && (reg.sessionId === sid || reg.sessionID === sid);
+  }
+
+  function nameEmailMatches(reg){
+    if(!firstName || !lastName || !email) return false;
+    var rfn = (reg.firstName || reg['First Name'] || reg['firstName'] || '').toLowerCase().trim();
+    var rln = (reg.lastName || reg['Last Name'] || reg['lastName'] || '').toLowerCase().trim();
+    var rem = (reg.parentEmail || reg['Parent Email'] || reg['parentEmail'] || reg.email || '').toLowerCase().trim();
+    return rfn === firstName && rln === lastName && rem === email;
+  }
+
+  var regBadge = function(reg){
+    return String(reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '').trim();
+  };
+
+  // 1) Badge on member + sheet row matches this session
+  if(badgeId){
+    var byBadge = registrations.find(function(reg){
+      return sessionMatches(reg) && regBadge(reg) === badgeId;
+    });
+    if(byBadge) return byBadge;
+  }
+
+  // 2) Member has no badge: name + email + session (original behaviour)
+  if(!badgeId && firstName && lastName && email){
+    var byNameOnly = registrations.find(function(reg){
+      return sessionMatches(reg) && nameEmailMatches(reg);
+    });
+    if(byNameOnly) return byNameOnly;
+  }
+
+  // 3) Member has badge but sheet row may not — same kid via name + email + session
+  if(badgeId && firstName && lastName && email){
+    var byNameWithBadgeMember = registrations.find(function(reg){
+      return sessionMatches(reg) && nameEmailMatches(reg);
+    });
+    if(byNameWithBadgeMember) return byNameWithBadgeMember;
+  }
+
+  // 4) Session reg[] stores registration id (UUID) — resolve row and confirm member
+  var regIds = normalizeSessionRegIds(s);
+  for(var i = 0; i < regIds.length; i++){
+    var rid = regIds[i];
+    if(rid == null || rid === '') continue;
+    var ridStr = String(rid).trim();
+    var reg = registrations.find(function(r){
+      return getRegistrationRecordId(r) === ridStr;
+    });
+    if(!reg || !sessionMatches(reg)) continue;
+    if(badgeId && regBadge(reg) === badgeId) return reg;
+    if(nameEmailMatches(reg)) return reg;
+  }
+
+  return null;
+}
+
 // Build registered sessions list
 function buildRegisteredSessions(){
   if(!selectedMember){
@@ -1896,51 +1982,11 @@ function buildRegisteredSessions(){
     var sessions = results[0] || [];
     var registrations = results[1] || [];
     
-    // Filter sessions where user is registered
+    // Filter sessions where user is registered (same rules as parent cancel uses to find the sheet row)
     var registeredSessions = sessions.filter(function(s){
-      var regIds = s.reg || [];
-      if(!Array.isArray(regIds)){
-        try {
-          regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
-        } catch(e){
-          regIds = [];
-        }
-      }
-      
-      var hasReg = false;
-      
-      // Check if badge ID is in reg array (if member has badgeId)
-      if(badgeId){
-        hasReg = regIds.indexOf(badgeId) > -1;
-      }
-      
-      // Also check via registration's sessionId and member details
-      if(!hasReg){
-        hasReg = registrations.some(function(reg){
-          var regBadgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
-          var regFirstName = (reg.firstName || reg['First Name'] || reg['firstName'] || '').toLowerCase().trim();
-          var regLastName = (reg.lastName || reg['Last Name'] || reg['lastName'] || '').toLowerCase().trim();
-          var regParentEmail = (reg.parentEmail || reg['Parent Email'] || reg['parentEmail'] || reg.email || '').toLowerCase().trim();
-          
-          // Match by badgeId if available
-          if(badgeId && regBadgeId === badgeId && (reg.sessionId === s.id || reg.sessionID === s.id)){
-            return true;
-          }
-          
-          // Match by name and parent email if no badgeId
-          if(!badgeId && firstName && lastName && parentEmail){
-            var memberFirst = firstName.toLowerCase().trim();
-            var memberLast = lastName.toLowerCase().trim();
-            if(regFirstName === memberFirst && regLastName === memberLast && regParentEmail === parentEmail && (reg.sessionId === s.id || reg.sessionID === s.id)){
-              return true;
-            }
-          }
-          
-          return false;
-        });
-      }
-      
-      return hasReg;
+      var regIds = normalizeSessionRegIds(s);
+      if(badgeId && regIds.indexOf(badgeId) > -1) return true;
+      return !!findRegistrationRowForSession(s, selectedMember, parentEmail, registrations);
     });
     
     // Sort by date (upcoming first)
@@ -1961,6 +2007,7 @@ function renderRegisteredSessions(){
   var box = $('registeredSessions');
   if(!box) return;
   
+  var parentEmail = $('regEmail').value.trim().toLowerCase() || '';
   var list = registeredSessionsData.allItems;
   var pagination = $('registeredPagination');
   
@@ -2045,116 +2092,75 @@ function renderRegisteredSessions(){
       ]).then(function(results){
         var sessions = results[0] || [];
         var registrations = results[1] || [];
+        var sessionToSave = sessions.find(function(x){ return x.id === s.id; }) || s;
         
-        // Find registration for this session and member
-        var registration = registrations.find(function(reg){
-          var regBadgeId = reg.badgeId || reg['Badge ID'] || reg['badgeId'] || '';
-          var regFirstName = (reg.firstName || reg['First Name'] || reg['firstName'] || '').toLowerCase().trim();
-          var regLastName = (reg.lastName || reg['Last Name'] || reg['lastName'] || '').toLowerCase().trim();
-          var regParentEmail = (reg.parentEmail || reg['Parent Email'] || reg['parentEmail'] || reg.email || '').toLowerCase().trim();
-          
-          var memberBadgeId = selectedMember.badgeId || '';
-          var memberFirstName = (selectedMember.firstName || '').toLowerCase().trim();
-          var memberLastName = (selectedMember.lastName || '').toLowerCase().trim();
-          var memberParentEmail = parentEmail;
-          
-          // Match by badgeId if both have it
-          if(memberBadgeId && regBadgeId === memberBadgeId && (reg.sessionId === s.id || reg.sessionID === s.id)){
+        var registration = findRegistrationRowForSession(sessionToSave, selectedMember, parentEmail, registrations);
+        var recordId = getRegistrationRecordId(registration);
+        var memberBadgeId = String(selectedMember.badgeId || '').trim();
+        
+        function stripMemberFromSessionReg(sess){
+          var regIds = normalizeSessionRegIds(sess);
+          var before = regIds.length;
+          sess.reg = regIds.filter(function(regId){
+            var x = String(regId).trim();
+            if(recordId && x === recordId) return false;
+            if(memberBadgeId && x === memberBadgeId) return false;
             return true;
-          }
-          
-          // Match by name and parent email if no badgeId
-          if(!memberBadgeId && memberFirstName && memberLastName && memberParentEmail){
-            if(regFirstName === memberFirstName && regLastName === memberLastName && regParentEmail === memberParentEmail && (reg.sessionId === s.id || reg.sessionID === s.id)){
-              return true;
-            }
-          }
-          
-          return false;
-        });
-        
-        if(registration && registration.id){
-          // Delete registration from sheet
-          deleteRegistrationFromSheets(registration.id).then(function(){
-            // Remove from session reg array
-            var regIds = s.reg || [];
-            if(!Array.isArray(regIds)){
-              try {
-                regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
-              } catch(e){
-                regIds = [];
-              }
-            }
-            
-            var memberBadgeId = selectedMember.badgeId || '';
-            s.reg = regIds.filter(function(regId){
-              return regId !== memberBadgeId && regId !== registration.id;
-            });
-            
-            return saveSessionToSheets(s);
-          }).then(function(){
-            showToast('Registration cancelled');
-            // Refresh both lists - keep button in loading state until lists refresh
-            // The button will be removed when the list re-renders
-            var refreshPromise = Promise.all([
-              getSessionsFromSheets(),
-              getRegistrationsFromSheets(true)
-            ]).then(function(){
-              buildRegisteredSessions();
-              buildEligible();
-            });
-            return refreshPromise;
-          }).then(function(){
-            // Lists have been refreshed - button is now removed from DOM
-            // No need to restore button state as it's been replaced
-          }).catch(function(err){
-            console.error('Error cancelling registration:', err);
-            alert('Error cancelling registration: ' + (err.message || 'Unknown error'));
-            // Restore button state on error
-            delBtn.disabled = false;
-            delBtn.textContent = originalText;
-            delBtn.style.opacity = '1';
-            delBtn.style.cursor = 'pointer';
           });
-        } else {
-          // Fallback: just remove from session reg array
-          var regIds = s.reg || [];
-          if(!Array.isArray(regIds)){
-            try {
-              regIds = typeof regIds === 'string' ? JSON.parse(regIds) : [];
-            } catch(e){
-              regIds = [];
-            }
-          }
-          
-          var memberBadgeId = selectedMember.badgeId || '';
-          s.reg = regIds.filter(function(regId){return regId !== memberBadgeId});
-          
-          saveSessionToSheets(s).then(function(){
-            showToast('Registration cancelled');
-            // Refresh both lists - keep button in loading state until lists refresh
-            // The button will be removed when the list re-renders
-            var refreshPromise = Promise.all([
-              getSessionsFromSheets(),
-              getRegistrationsFromSheets(true)
-            ]).then(function(){
-              buildRegisteredSessions();
-              buildEligible();
-            });
-            return refreshPromise;
-          }).then(function(){
-            // Lists have been refreshed - button is now removed from DOM
-            // No need to restore button state as it's been replaced
-          }).catch(function(err){
-            console.error('Error cancelling registration:', err);
-            alert('Error cancelling registration: ' + (err.message || 'Unknown error'));
-            // Restore button state on error
-            delBtn.disabled = false;
-            delBtn.textContent = originalText;
-            delBtn.style.opacity = '1';
-            delBtn.style.cursor = 'pointer';
+          return before !== sess.reg.length;
+        }
+        
+        function afterCancelRefresh(){
+          registrationsCache.timestamp = 0;
+          capacityCache = {};
+          showToast('Registration cancelled');
+          return Promise.all([
+            getSessionsFromSheets(),
+            getRegistrationsFromSheets(true)
+          ]).then(function(){
+            buildRegisteredSessions();
+            buildEligible();
           });
         }
+        
+        function restoreDelBtn(){
+          delBtn.disabled = false;
+          delBtn.textContent = originalText;
+          delBtn.style.opacity = '1';
+          delBtn.style.cursor = 'pointer';
+        }
+        
+        if(recordId){
+          deleteRegistrationFromSheets(recordId).then(function(){
+            stripMemberFromSessionReg(sessionToSave);
+            return saveSessionToSheets(sessionToSave);
+          }).then(afterCancelRefresh).catch(function(err){
+            console.error('Error cancelling registration:', err);
+            alert('Error cancelling registration: ' + (err.message || 'Unknown error'));
+            restoreDelBtn();
+          });
+          return;
+        }
+        
+        // No sheet row id (legacy / odd data): still remove badge or known id from session so UI stays consistent
+        if(stripMemberFromSessionReg(sessionToSave)){
+          saveSessionToSheets(sessionToSave).then(afterCancelRefresh).catch(function(err){
+            console.error('Error cancelling registration:', err);
+            alert('Error cancelling registration: ' + (err.message || 'Unknown error'));
+            restoreDelBtn();
+          });
+          return;
+        }
+        
+        alert('Could not find this registration to cancel. Please try again or contact us.');
+        restoreDelBtn();
+      }).catch(function(err){
+        console.error('Error cancelling registration:', err);
+        alert('Error cancelling registration: ' + (err.message || 'Unknown error'));
+        delBtn.disabled = false;
+        delBtn.textContent = originalText;
+        delBtn.style.opacity = '1';
+        delBtn.style.cursor = 'pointer';
       });
       };
     }
@@ -5461,7 +5467,7 @@ function setupAdminButtons(){
               if(!hasReg){alert('No registration to delete');return}
               if(!confirm('Remove this registration? This will delete the registration and remove it from the session.')) return;
               
-              var registrationId = matchingReg ? matchingReg.id : null;
+              var registrationId = matchingReg ? getRegistrationRecordId(matchingReg) : '';
               if(!registrationId){
                 alert('Registration ID not found');
                 return;
