@@ -953,17 +953,23 @@ function listUpcoming(){
 function title(s){return new Date(s.dt).toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'})+' • '+new Date(s.dt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})+' — '+s.topic}
 function ymd(date){var dt=new Date(date);return dt.toISOString().slice(0,10)}
 function capLeft(s){return (s.capacity||10)-((s.reg&&s.reg.length)||0)}
+/** Max registrations for a session (from sheet row); default 10 when missing/invalid */
+function sessionCapacity(s){
+  var c = s && s.capacity != null ? Number(s.capacity) : NaN;
+  return (isFinite(c) && c > 0) ? Math.floor(c) : 10;
+}
 // Cache for session capacity calculations
 var capacityCache = {};
 
 function capLeftFromSheets(s,sheetRegs){
+  var cap = sessionCapacity(s);
   // If no registrations data, all seats are available
   if(!sheetRegs || !Array.isArray(sheetRegs) || sheetRegs.length === 0){
-    return 10;
+    return cap;
   }
   
   var sessionId = s.id;
-  var cacheKey = sessionId || (s.dt ? new Date(s.dt).toISOString() : '');
+  var cacheKey = (sessionId || (s.dt ? new Date(s.dt).toISOString() : '')) + '|cap:' + cap;
   
   // Check cache first
   if(capacityCache[cacheKey] !== undefined){
@@ -991,7 +997,7 @@ function capLeftFromSheets(s,sheetRegs){
     }
   }
   
-  var seatsLeft = Math.max(0, 10 - count);
+  var seatsLeft = Math.max(0, cap - count);
   // Cache the result
   capacityCache[cacheKey] = seatsLeft;
   return seatsLeft;
@@ -2291,7 +2297,7 @@ function buildEligible(){
       var sessionDateKey = new Date(s.dt).toISOString().slice(0,10);
       var sessionTimeKey = new Date(s.dt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       
-      // Check capacity from Google Sheets (max 10 per session)
+      // Check capacity from Google Sheets (uses each session's capacity)
       var seatsLeft = capLeftFromSheets(s, sheetRegs);
       
       // Check if this specific kid already registered this month
@@ -2355,7 +2361,7 @@ function renderEligibleSessions(){
     
     var row = document.createElement('div');
     row.className = 'item';
-    row.innerHTML = '<div><div>' + title(s) + '</div><div class="caption muted">Seats left: ' + seatsLeft + ' / 10</div></div>';
+    row.innerHTML = '<div><div>' + title(s) + '</div><div class="caption muted">Seats left: ' + seatsLeft + ' / ' + sessionCapacity(s) + '</div></div>';
     var btn = document.createElement('button');
     btn.className = 'primary';
     btn.textContent = 'Register';
