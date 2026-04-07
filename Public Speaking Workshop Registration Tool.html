@@ -952,7 +952,20 @@ function listUpcoming(){
 }
 function title(s){return new Date(s.dt).toLocaleDateString([], {weekday:'short', month:'short', day:'numeric', year:'numeric'})+' • '+new Date(s.dt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})+' — '+s.topic}
 function ymd(date){var dt=new Date(date);return dt.toISOString().slice(0,10)}
-function capLeft(s){return (s.capacity||10)-((s.reg&&s.reg.length)||0)}
+function uniqueSessionRegSlotCount(reg){
+  if(!reg || !reg.length) return 0;
+  var seen = {};
+  var n = 0;
+  for(var i = 0; i < reg.length; i++){
+    var x = reg[i];
+    var key = typeof x === 'string' ? x : (x && x.id != null ? String(x.id) : JSON.stringify(x));
+    if(seen[key]) continue;
+    seen[key] = true;
+    n++;
+  }
+  return n;
+}
+function capLeft(s){return (s.capacity||10)-uniqueSessionRegSlotCount(s.reg||[])}
 /** Max registrations for a session (from sheet row); default 10 when missing/invalid */
 function sessionCapacity(s){
   var c = s && s.capacity != null ? Number(s.capacity) : NaN;
@@ -961,6 +974,12 @@ function sessionCapacity(s){
 // Cache for session capacity calculations
 var capacityCache = {};
 
+/** Session id on a registration row (sheet may use Session ID column only in raw object) */
+function registrationRowSessionId(r){
+  if(!r) return '';
+  return String(r.sessionId || r['Session ID'] || r['sessionId'] || '').trim();
+}
+
 function capLeftFromSheets(s,sheetRegs){
   var cap = sessionCapacity(s);
   // If no registrations data, all seats are available
@@ -968,7 +987,7 @@ function capLeftFromSheets(s,sheetRegs){
     return cap;
   }
   
-  var sessionId = s.id;
+  var sessionId = String(s && s.id || '').trim();
   var cacheKey = (sessionId || (s.dt ? new Date(s.dt).toISOString() : '')) + '|cap:' + cap;
   
   // Check cache first
@@ -979,26 +998,40 @@ function capLeftFromSheets(s,sheetRegs){
   var sessionDate = new Date(s.dt).toISOString().slice(0,10);
   var sessionTime = new Date(s.dt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   
+  var seen = {};
   var count = 0;
-  // Optimized: use for loop instead of filter for better performance
   for(var i = 0; i < sheetRegs.length; i++){
     var r = sheetRegs[i];
     if(!r) continue;
-    // Match by sessionId first (most reliable)
-    if(sessionId && r.sessionId && r.sessionId === sessionId){
-      count++;
-      continue;
+    var regSid = registrationRowSessionId(r);
+    var matches = false;
+    if(sessionId && regSid && regSid === sessionId){
+      matches = true;
+    } else if(sessionId && !regSid){
+      // Legacy rows only: no session id — match by date/time (avoid double-counting rows that already matched by sessionId)
+      var regDate = r.sessionDate || (r.registeredDateAndTime ? new Date(r.registeredDateAndTime).toISOString().slice(0,10) : '');
+      var regTime = r.sessionTime || (r.registeredDateAndTime ? new Date(r.registeredDateAndTime).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '');
+      if(regDate === sessionDate && regTime === sessionTime){
+        matches = true;
+      }
     }
-    // Fallback: match by date and time
-    var regDate = r.sessionDate || (r.registeredDateAndTime ? new Date(r.registeredDateAndTime).toISOString().slice(0,10) : '');
-    var regTime = r.sessionTime || (r.registeredDateAndTime ? new Date(r.registeredDateAndTime).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '');
-    if(regDate === sessionDate && regTime === sessionTime){
-      count++;
+    if(!matches) continue;
+    var rid = getRegistrationRecordId(r);
+    if(rid){
+      if(seen['id:' + rid]) continue;
+      seen['id:' + rid] = true;
+    } else {
+      var pe = String(r.parentEmail || r['Parent Email'] || '').toLowerCase().trim();
+      var fn = String(r.firstName || r['First Name'] || '').toLowerCase().trim();
+      var ln = String(r.lastName || r['Last Name'] || '').toLowerCase().trim();
+      var fp = 'fp:' + sessionId + '|' + regSid + '|' + sessionDate + '|' + sessionTime + '|' + pe + '|' + fn + '|' + ln;
+      if(seen[fp]) continue;
+      seen[fp] = true;
     }
+    count++;
   }
   
   var seatsLeft = Math.max(0, cap - count);
-  // Cache the result
   capacityCache[cacheKey] = seatsLeft;
   return seatsLeft;
 }
@@ -2715,10 +2748,10 @@ function updateSessionAfterRegistration(sessionId, registrationId){
       return;
     }
     
-    // Get the current session data
+    // Get the current session data (getSessionsFromSheets resolves to an array, not { success, sessions })
     getSessionsFromSheets().then(function(sessionsResult){
-      if(sessionsResult && sessionsResult.success && sessionsResult.sessions){
-        var sessionToUpdate = sessionsResult.sessions.find(function(s){
+      var sessions = Array.isArray(sessionsResult) ? sessionsResult : [];
+      var sessionToUpdate = sessions.find(function(s){
           return s.id === sessionId;
         });
         
@@ -2759,10 +2792,6 @@ function updateSessionAfterRegistration(sessionId, registrationId){
           console.warn('Session not found in sheets:', sessionId);
           resolve({success: true, message: 'Session not found'});
         }
-      } else {
-        console.warn('Could not fetch sessions');
-        resolve({success: true, message: 'Could not fetch sessions'});
-      }
     }).catch(function(err){
       console.error('Error fetching sessions for update:', err);
       reject(err);
